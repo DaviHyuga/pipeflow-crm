@@ -10,18 +10,18 @@
 **Objetivo:** Repositório configurado, projeto Next.js rodando localmente com todas as dependências instaladas e variáveis de ambiente prontas.
 
 ### Entregas
-- [ ] Criar repositório GitHub `pipeflow-crm`
-- [ ] Scaffold Next.js 14 com App Router + TypeScript strict (`create-next-app`)
-- [ ] Configurar Tailwind CSS
-- [ ] Inicializar shadcn/ui (`npx shadcn@latest init`)
-- [ ] Instalar dependências: `@dnd-kit/core`, `@dnd-kit/sortable`, `recharts`, `@supabase/supabase-js`, `@supabase/ssr`, `stripe`, `resend`
-- [ ] Criar estrutura de pastas: `/app`, `/components`, `/lib`, `/hooks`, `/types`
-- [ ] Configurar `.env.local` com todas as variáveis (ver `CLAUDE.md`)
-- [ ] Configurar `tsconfig.json` com strict mode e path aliases (`@/`)
-- [ ] Criar `lib/supabase/client.ts` e `lib/supabase/server.ts` (clientes browser e server)
-- [ ] Confirmar `npm run dev` sem erros
+- [x] Criar repositório GitHub `pipeflow-crm`
+- [x] Scaffold Next.js 16 com App Router + TypeScript strict (`create-next-app`)
+- [x] Configurar Tailwind CSS
+- [x] Inicializar shadcn/ui (`npx shadcn@latest init`)
+- [x] Instalar dependências: `@dnd-kit/core`, `@dnd-kit/sortable`, `recharts`, `@supabase/supabase-js`, `@supabase/ssr`, `stripe`, `resend`
+- [x] Criar estrutura de pastas: `/app`, `/components`, `/lib`, `/hooks`, `/types`
+- [x] Configurar `.env.local` com todas as variáveis (ver `CLAUDE.md`)
+- [x] Configurar `tsconfig.json` com strict mode e path aliases (`@/`)
+- [x] Criar `lib/supabase/client.ts` e `lib/supabase/server.ts` (clientes browser e server)
+- [x] Confirmar `npm run dev` sem erros
 
-**Commit final:** `feat: scaffold Next.js 14 + shadcn/ui + dependências do projeto`
+**Commit final:** `feat: scaffold Next.js 16 + shadcn/ui + dependências do projeto`
 
 ---
 
