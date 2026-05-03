@@ -10,18 +10,18 @@
 **Objetivo:** Repositório configurado, projeto Next.js rodando localmente com todas as dependências instaladas e variáveis de ambiente prontas.
 
 ### Entregas
-- [ ] Criar repositório GitHub `pipeflow-crm`
-- [ ] Scaffold Next.js 14 com App Router + TypeScript strict (`create-next-app`)
-- [ ] Configurar Tailwind CSS
-- [ ] Inicializar shadcn/ui (`npx shadcn@latest init`)
-- [ ] Instalar dependências: `@dnd-kit/core`, `@dnd-kit/sortable`, `recharts`, `@supabase/supabase-js`, `@supabase/ssr`, `stripe`, `resend`
-- [ ] Criar estrutura de pastas: `/app`, `/components`, `/lib`, `/hooks`, `/types`
-- [ ] Configurar `.env.local` com todas as variáveis (ver `CLAUDE.md`)
-- [ ] Configurar `tsconfig.json` com strict mode e path aliases (`@/`)
-- [ ] Criar `lib/supabase/client.ts` e `lib/supabase/server.ts` (clientes browser e server)
-- [ ] Confirmar `npm run dev` sem erros
+- [x] Criar repositório GitHub `pipeflow-crm`
+- [x] Scaffold Next.js 16 com App Router + TypeScript strict (`create-next-app`)
+- [x] Configurar Tailwind CSS
+- [x] Inicializar shadcn/ui (`npx shadcn@latest init`)
+- [x] Instalar dependências: `@dnd-kit/core`, `@dnd-kit/sortable`, `recharts`, `@supabase/supabase-js`, `@supabase/ssr`, `stripe`, `resend`
+- [x] Criar estrutura de pastas: `/app`, `/components`, `/lib`, `/hooks`, `/types`
+- [x] Configurar `.env.local` com todas as variáveis (ver `CLAUDE.md`)
+- [x] Configurar `tsconfig.json` com strict mode e path aliases (`@/`)
+- [x] Criar `lib/supabase/client.ts` e `lib/supabase/server.ts` (clientes browser e server)
+- [x] Confirmar `npm run dev` sem erros
 
-**Commit final:** `feat: scaffold Next.js 14 + shadcn/ui + dependências do projeto`
+**Commit final:** `feat: scaffold Next.js 16 + shadcn/ui + dependências do projeto`
 
 ---
 
@@ -30,19 +30,19 @@
 **Objetivo:** Shell visual do app completo com sidebar, topbar e área de conteúdo — sem dados reais, apenas UI estática.
 
 ### Entregas
-- [ ] Criar layout raiz `/app/layout.tsx` com fontes e providers
-- [ ] Criar `/app/(app)/layout.tsx` — layout autenticado com sidebar + content area
-- [ ] Componente `Sidebar` com dark background, logo PipeFlow, nav links (Dashboard, Leads, Pipeline, Configurações)
-- [ ] Componente `WorkspaceSwitcher` — dropdown na sidebar para alternar workspaces (UI estática)
-- [ ] Componente `Topbar` com avatar do usuário e dropdown de perfil
-- [ ] Instalar e configurar componentes shadcn/ui necessários: `Button`, `Avatar`, `DropdownMenu`, `Badge`, `Card`, `Input`, `Dialog`, `Sheet`, `Separator`, `Tooltip`
-- [ ] Página `/app/(app)/dashboard` — página vazia com título
-- [ ] Página `/app/(app)/leads` — página vazia com título
-- [ ] Página `/app/(app)/pipeline` — página vazia com título
-- [ ] Responsividade básica (sidebar colapsável em mobile via Sheet)
-- [ ] Definir tokens de cor no `tailwind.config.ts` (primary blue, sidebar dark, content light)
+- [x] Criar layout raiz `/app/layout.tsx` com fontes e providers
+- [x] Criar `/app/(app)/layout.tsx` — layout autenticado com sidebar + content area
+- [x] Componente `Sidebar` com dark background, logo PipeFlow, nav links (Dashboard, Leads, Pipeline, Configurações)
+- [x] Componente `WorkspaceSwitcher` — dropdown na sidebar para alternar workspaces (UI estática)
+- [x] Componente `Topbar` com avatar do usuário e dropdown de perfil
+- [x] Instalar e configurar componentes shadcn/ui necessários: `Button`, `Avatar`, `DropdownMenu`, `Badge`, `Card`, `Input`, `Dialog`, `Sheet`, `Separator`, `Tooltip`
+- [x] Página `/app/(app)/dashboard` — página vazia com título
+- [x] Página `/app/(app)/leads` — página vazia com título
+- [x] Página `/app/(app)/pipeline` — página vazia com título
+- [x] Responsividade básica (sidebar colapsável em mobile via Sheet)
+- [x] Definir tokens de cor no `tailwind.config.ts` (primary blue, sidebar dark, content light)
 
-**Commit final:** `feat: layout shell com sidebar dark, topbar e design system base`
+**Commit final:** `feat: layout shell com sidebar dark, topbar e design system base` ✅
 
 ---
 
