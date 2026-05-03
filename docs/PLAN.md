@@ -30,19 +30,19 @@
 **Objetivo:** Shell visual do app completo com sidebar, topbar e área de conteúdo — sem dados reais, apenas UI estática.
 
 ### Entregas
-- [ ] Criar layout raiz `/app/layout.tsx` com fontes e providers
-- [ ] Criar `/app/(app)/layout.tsx` — layout autenticado com sidebar + content area
-- [ ] Componente `Sidebar` com dark background, logo PipeFlow, nav links (Dashboard, Leads, Pipeline, Configurações)
-- [ ] Componente `WorkspaceSwitcher` — dropdown na sidebar para alternar workspaces (UI estática)
-- [ ] Componente `Topbar` com avatar do usuário e dropdown de perfil
-- [ ] Instalar e configurar componentes shadcn/ui necessários: `Button`, `Avatar`, `DropdownMenu`, `Badge`, `Card`, `Input`, `Dialog`, `Sheet`, `Separator`, `Tooltip`
-- [ ] Página `/app/(app)/dashboard` — página vazia com título
-- [ ] Página `/app/(app)/leads` — página vazia com título
-- [ ] Página `/app/(app)/pipeline` — página vazia com título
-- [ ] Responsividade básica (sidebar colapsável em mobile via Sheet)
-- [ ] Definir tokens de cor no `tailwind.config.ts` (primary blue, sidebar dark, content light)
+- [x] Criar layout raiz `/app/layout.tsx` com fontes e providers
+- [x] Criar `/app/(app)/layout.tsx` — layout autenticado com sidebar + content area
+- [x] Componente `Sidebar` com dark background, logo PipeFlow, nav links (Dashboard, Leads, Pipeline, Configurações)
+- [x] Componente `WorkspaceSwitcher` — dropdown na sidebar para alternar workspaces (UI estática)
+- [x] Componente `Topbar` com avatar do usuário e dropdown de perfil
+- [x] Instalar e configurar componentes shadcn/ui necessários: `Button`, `Avatar`, `DropdownMenu`, `Badge`, `Card`, `Input`, `Dialog`, `Sheet`, `Separator`, `Tooltip`
+- [x] Página `/app/(app)/dashboard` — página vazia com título
+- [x] Página `/app/(app)/leads` — página vazia com título
+- [x] Página `/app/(app)/pipeline` — página vazia com título
+- [x] Responsividade básica (sidebar colapsável em mobile via Sheet)
+- [x] Definir tokens de cor no `tailwind.config.ts` (primary blue, sidebar dark, content light)
 
-**Commit final:** `feat: layout shell com sidebar dark, topbar e design system base`
+**Commit final:** `feat: layout shell com sidebar dark, topbar e design system base` ✅
 
 ---
 
