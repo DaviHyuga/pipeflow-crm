@@ -6,6 +6,7 @@ import { cn } from "@/lib/utils";
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
@@ -40,33 +41,35 @@ export function WorkspaceSwitcher() {
       </DropdownMenuTrigger>
 
       <DropdownMenuContent className="w-56" align="start" sideOffset={6}>
-        <DropdownMenuLabel className="text-[11px] uppercase tracking-wider text-muted-foreground font-medium px-2">
-          Workspaces
-        </DropdownMenuLabel>
-        {FAKE_WORKSPACES.map((ws) => (
-          <DropdownMenuItem
-            key={ws.id}
-            onClick={() => setActive(ws)}
-            className="flex items-center gap-2 cursor-pointer"
-          >
-            <div className="flex h-5 w-5 flex-shrink-0 items-center justify-center rounded bg-muted text-[10px] font-bold">
-              {ws.name.charAt(0)}
-            </div>
-            <span className="flex-1 truncate text-sm">{ws.name}</span>
-            <Badge
-              variant="outline"
-              className={cn(
-                "text-[10px] px-1.5 py-0 h-4",
-                ws.plan === "Pro" && "border-primary/40 text-primary"
-              )}
+        <DropdownMenuGroup>
+          <DropdownMenuLabel className="text-[11px] uppercase tracking-wider text-muted-foreground font-medium px-2">
+            Workspaces
+          </DropdownMenuLabel>
+          {FAKE_WORKSPACES.map((ws) => (
+            <DropdownMenuItem
+              key={ws.id}
+              onClick={() => setActive(ws)}
+              className="flex items-center gap-2 cursor-pointer"
             >
-              {ws.plan}
-            </Badge>
-            {ws.id === active.id && (
-              <Check className="h-3 w-3 text-primary flex-shrink-0" />
-            )}
-          </DropdownMenuItem>
-        ))}
+              <div className="flex h-5 w-5 flex-shrink-0 items-center justify-center rounded bg-muted text-[10px] font-bold">
+                {ws.name.charAt(0)}
+              </div>
+              <span className="flex-1 truncate text-sm">{ws.name}</span>
+              <Badge
+                variant="outline"
+                className={cn(
+                  "text-[10px] px-1.5 py-0 h-4",
+                  ws.plan === "Pro" && "border-primary/40 text-primary"
+                )}
+              >
+                {ws.plan}
+              </Badge>
+              {ws.id === active.id && (
+                <Check className="h-3 w-3 text-primary flex-shrink-0" />
+              )}
+            </DropdownMenuItem>
+          ))}
+        </DropdownMenuGroup>
         <DropdownMenuSeparator />
         <DropdownMenuItem className="gap-2 cursor-pointer text-muted-foreground hover:text-foreground">
           <Plus className="h-4 w-4" />

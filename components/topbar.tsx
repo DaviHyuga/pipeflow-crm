@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
@@ -86,14 +87,16 @@ export function Topbar() {
               </Avatar>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-56" align="end">
-              <DropdownMenuLabel className="font-normal pb-1">
-                <p className="text-sm font-semibold leading-none">
-                  {FAKE_USER.name}
-                </p>
-                <p className="text-xs text-muted-foreground mt-1">
-                  {FAKE_USER.email}
-                </p>
-              </DropdownMenuLabel>
+              <DropdownMenuGroup>
+                <DropdownMenuLabel className="font-normal pb-1">
+                  <p className="text-sm font-semibold leading-none">
+                    {FAKE_USER.name}
+                  </p>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    {FAKE_USER.email}
+                  </p>
+                </DropdownMenuLabel>
+              </DropdownMenuGroup>
               <DropdownMenuSeparator />
               <DropdownMenuItem className="gap-2 cursor-pointer">
                 <User className="h-4 w-4" />
