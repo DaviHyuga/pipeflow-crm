@@ -117,7 +117,8 @@ export function Topbar() {
       <Sheet open={mobileOpen} onOpenChange={setMobileOpen}>
         <SheetContent
           side="left"
-          className="w-64 p-0 bg-sidebar border-sidebar-border"
+          showCloseButton={false}
+          className="p-0 bg-sidebar border-sidebar-border"
         >
           <SheetHeader className="sr-only">
             <SheetTitle>Menu de navegação</SheetTitle>
