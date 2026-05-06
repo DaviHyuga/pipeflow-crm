@@ -88,22 +88,24 @@
 **Objetivo:** Tela de listagem e detalhe de leads completa com dados mockados.
 
 ### Entregas
-- [ ] Criar tipos em `types/lead.ts` (Lead, Activity, ActivityType)
-- [ ] Criar dados mock em `lib/mock/leads.ts`
-- [ ] Página `/app/(app)/leads` — listagem de leads
-  - [ ] Tabela/lista com colunas: nome, empresa, cargo, status, responsável, data
-  - [ ] Barra de busca por nome/empresa
-  - [ ] Filtros por status e responsável (dropdowns)
-  - [ ] Botão "Novo Lead" abrindo modal/sheet
-  - [ ] Badge de status colorido por etapa
-- [ ] Modal/Sheet `LeadForm` — formulário de criação/edição de lead (nome, e-mail, telefone, empresa, cargo, status)
-- [ ] Página `/app/(app)/leads/[id]` — detalhe do lead
-  - [ ] Header com nome, empresa, cargo e status
-  - [ ] Seção de informações de contato
-  - [ ] Componente `ActivityTimeline` — lista cronológica de atividades
-  - [ ] Modal `AddActivity` — formulário para registrar ligação/e-mail/reunião/nota
+- [x] Criar tipos em `types/lead.ts` (Lead, Activity, ActivityType)
+- [x] Criar dados mock em `lib/mock/leads.ts`
+- [x] Página `/app/(app)/leads` — listagem de leads
+  - [x] Tabela/lista com colunas: nome, empresa, cargo, status, responsável, data
+  - [x] Barra de busca por nome/empresa
+  - [x] Filtros por status e responsável (dropdowns)
+  - [x] Botão "Novo Lead" abrindo modal/sheet
+  - [x] Badge de status colorido por etapa
+- [x] Modal/Sheet `LeadForm` — formulário de criação/edição de lead (nome, e-mail, telefone, empresa, cargo, status)
+- [x] Página `/app/(app)/leads/[id]` — detalhe do lead
+  - [x] Header com nome, empresa, cargo e status
+  - [x] Seção de informações de contato
+  - [x] Componente `ActivityTimeline` — lista cronológica de atividades
+  - [x] Modal `AddActivity` — formulário para registrar ligação/e-mail/reunião/nota
 
-**Commit final:** `feat: UI de leads com listagem, busca, filtros, detalhe e timeline de atividades`
+> UI concluída (aula 2.3). Inclui exclusão com confirmação e 12 leads brasileiros mockados.
+
+**Commit final:** `feat: UI de leads com listagem, busca, filtros, detalhe e timeline de atividades` ✅
 
 ---
 
