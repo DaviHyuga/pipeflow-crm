@@ -114,19 +114,21 @@
 **Objetivo:** Kanban drag-and-drop completo com @dnd-kit usando dados mockados.
 
 ### Entregas
-- [ ] Criar tipos em `types/pipeline.ts` (Stage, Deal, KanbanBoard)
-- [ ] Criar dados mock em `lib/mock/pipeline.ts`
-- [ ] Página `/app/(app)/pipeline` — board Kanban
-- [ ] Componente `KanbanBoard` — container do board com DndContext
-- [ ] Componente `KanbanColumn` — coluna por etapa (Novo Lead, Contato Realizado, Proposta Enviada, Negociação, Fechado Ganho, Fechado Perdido)
-- [ ] Componente `DealCard` — card arrastável com título, valor (R$), lead vinculado, responsável, prazo
-- [ ] Drag-and-drop funcional entre colunas com `@dnd-kit/sortable`
-- [ ] Estado otimista no frontend (mover card sem aguardar API)
-- [ ] Modal `DealForm` — criar/editar negócio (título, valor, lead vinculado, responsável, prazo, etapa)
-- [ ] Botão "Novo Negócio" em cada coluna
-- [ ] Indicador visual de valor total por coluna
+- [x] Criar tipos em `types/pipeline.ts` (Stage, Deal, KanbanBoard)
+- [x] Criar dados mock em `lib/mock/pipeline.ts`
+- [x] Página `/app/(app)/pipeline` — board Kanban
+- [x] Componente `KanbanBoard` — container do board com DndContext
+- [x] Componente `KanbanColumn` — coluna por etapa (Novo Lead, Contato Realizado, Proposta Enviada, Negociação, Fechado Ganho, Fechado Perdido)
+- [x] Componente `DealCard` — card arrastável com título, valor (R$), lead vinculado, responsável, prazo
+- [x] Drag-and-drop funcional entre colunas com `@dnd-kit/sortable`
+- [x] Estado otimista no frontend (mover card sem aguardar API)
+- [x] Modal `DealForm` — criar/editar negócio (título, valor, lead vinculado, responsável, prazo, etapa)
+- [x] Botão "Novo Negócio" em cada coluna
+- [x] Indicador visual de valor total por coluna
 
-**Commit final:** `feat: Kanban pipeline UI com drag-and-drop @dnd-kit e cards de negócios`
+> UI concluída (aula 2.4). 16 deals mockados, drag entre colunas e dentro da coluna, hover colorido por etapa, stagger animation.
+
+**Commit final:** `feat: Kanban pipeline UI com drag-and-drop @dnd-kit e cards de negócios` ✅
 
 ---
 
