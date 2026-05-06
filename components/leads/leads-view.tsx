@@ -2,6 +2,7 @@
 
 import { useState, useMemo } from "react"
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 import { Lead, LeadStatus } from "@/types/lead"
 import { mockOwners } from "@/lib/mock/leads"
 import { LeadStatusBadge } from "@/components/leads/lead-status-badge"
@@ -15,6 +16,13 @@ import {
   DropdownMenuItem,
   DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu"
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog"
 import { Plus, Search, MoreHorizontal, ExternalLink, Pencil, Trash2 } from "lucide-react"
 
 const STATUS_OPTIONS: { value: LeadStatus | "all"; label: string }[] = [
@@ -49,12 +57,14 @@ interface LeadsViewProps {
 }
 
 export function LeadsView({ initialLeads }: LeadsViewProps) {
+  const router = useRouter()
   const [leads, setLeads] = useState<Lead[]>(initialLeads)
   const [search, setSearch] = useState("")
   const [statusFilter, setStatusFilter] = useState<LeadStatus | "all">("all")
   const [ownerFilter, setOwnerFilter] = useState<string>("all")
   const [formOpen, setFormOpen] = useState(false)
   const [selectedLead, setSelectedLead] = useState<Lead | null>(null)
+  const [deleteTarget, setDeleteTarget] = useState<Lead | null>(null)
 
   const filtered = useMemo(() => {
     return leads.filter((lead) => {
@@ -89,6 +99,11 @@ export function LeadsView({ initialLeads }: LeadsViewProps) {
 
   function handleDelete(id: string) {
     setLeads((prev) => prev.filter((l) => l.id !== id))
+    setDeleteTarget(null)
+  }
+
+  function confirmDelete() {
+    if (deleteTarget) handleDelete(deleteTarget.id)
   }
 
   const selectClass =
@@ -241,14 +256,11 @@ export function LeadsView({ initialLeads }: LeadsViewProps) {
                           <MoreHorizontal className="h-4 w-4" />
                         </DropdownMenuTrigger>
                         <DropdownMenuContent align="end">
-                          <DropdownMenuItem>
-                            <Link
-                              href={`/leads/${lead.id}`}
-                              className="flex items-center gap-2 w-full"
-                            >
-                              <ExternalLink className="h-4 w-4" />
-                              Ver detalhes
-                            </Link>
+                          <DropdownMenuItem
+                            onClick={() => router.push(`/leads/${lead.id}`)}
+                          >
+                            <ExternalLink className="h-4 w-4" />
+                            Ver detalhes
                           </DropdownMenuItem>
                           <DropdownMenuItem onClick={() => openEdit(lead)}>
                             <Pencil className="h-4 w-4" />
@@ -257,7 +269,7 @@ export function LeadsView({ initialLeads }: LeadsViewProps) {
                           <DropdownMenuSeparator />
                           <DropdownMenuItem
                             variant="destructive"
-                            onClick={() => handleDelete(lead.id)}
+                            onClick={() => setDeleteTarget(lead)}
                           >
                             <Trash2 className="h-4 w-4" />
                             Excluir
@@ -288,6 +300,31 @@ export function LeadsView({ initialLeads }: LeadsViewProps) {
         onSave={handleSave}
         onDelete={handleDelete}
       />
+
+      {/* Delete confirmation */}
+      <Dialog
+        open={!!deleteTarget}
+        onOpenChange={(open) => { if (!open) setDeleteTarget(null) }}
+      >
+        <DialogContent className="sm:max-w-sm">
+          <DialogHeader>
+            <DialogTitle>Excluir lead</DialogTitle>
+          </DialogHeader>
+          <p className="text-sm text-muted-foreground">
+            Tem certeza que deseja excluir{" "}
+            <span className="font-medium text-foreground">{deleteTarget?.name}</span>?
+            Esta ação não pode ser desfeita.
+          </p>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setDeleteTarget(null)}>
+              Cancelar
+            </Button>
+            <Button variant="destructive" onClick={confirmDelete}>
+              Excluir
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }
