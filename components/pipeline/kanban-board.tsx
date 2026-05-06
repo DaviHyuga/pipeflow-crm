@@ -100,10 +100,20 @@ export function KanbanBoard() {
 
       if (!isOverColumn) {
         const overIndex = targetDeals.findIndex((d) => d.id === overId)
+
+        // Insere antes ou depois do card alvo conforme o cursor esteja
+        // acima ou abaixo do seu ponto médio vertical
+        const isBelowMidpoint =
+          active.rect.current.translated != null &&
+          active.rect.current.translated.top >
+            over.rect.top + over.rect.height / 2
+
+        const insertIndex = isBelowMidpoint ? overIndex + 1 : overIndex
+
         targetDeals = [
-          ...targetDeals.slice(0, overIndex + 1),
+          ...targetDeals.slice(0, insertIndex),
           updatedDeal,
-          ...targetDeals.slice(overIndex + 1),
+          ...targetDeals.slice(insertIndex),
         ]
       } else {
         targetDeals = [...targetDeals, updatedDeal]
