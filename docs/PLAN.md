@@ -134,16 +134,18 @@
 
 ### Entregas
 - [ ] Criar projeto Supabase e configurar variáveis de ambiente
-- [ ] Criar `/app/(auth)/login/page.tsx` — formulário de login (e-mail + senha)
-- [ ] Criar `/app/(auth)/signup/page.tsx` — formulário de cadastro
-- [ ] Criar `/app/(auth)/layout.tsx` — layout público de auth (centralizado, sem sidebar)
+- [x] Criar `/app/(auth)/login/page.tsx` — formulário de login (e-mail + senha)
+- [x] Criar `/app/(auth)/signup/page.tsx` — formulário de cadastro
+- [x] Criar `/app/(auth)/layout.tsx` — layout público de auth (centralizado, sem sidebar)
 - [ ] Criar `lib/supabase/actions.ts` — Server Actions para login, signup, logout
 - [ ] Middleware `middleware.ts` — redirecionar rotas protegidas para `/login` se não autenticado
-- [ ] Redirecionar para `/dashboard` após login bem-sucedido
+- [x] Redirecionar para `/dashboard` após login bem-sucedido
 - [ ] Logout no dropdown de perfil da topbar
-- [ ] Página `/app/(auth)/forgot-password` — solicitar reset de senha
+- [x] Página `/app/(auth)/forgot-password` — solicitar reset de senha
 - [ ] Callback de auth: `/app/auth/callback/route.ts`
 - [ ] Proteger todas as rotas `(app)` com middleware
+
+> UI concluída (aula 2.2). Integração Supabase pendente para fase de backend.
 
 **Commit final:** `feat: autenticação completa com Supabase Auth, middleware e proteção de rotas`
 
@@ -155,8 +157,8 @@
 
 ### Entregas
 - [ ] Schema Supabase: tabelas `workspaces`, `workspace_members` (role: admin/member)
-- [ ] Onboarding flow: após cadastro, redirecionar para `/onboarding/create-workspace`
-- [ ] Página `/app/(onboarding)/create-workspace` — formulário de criação do primeiro workspace
+- [x] Onboarding flow: após cadastro, redirecionar para `/create-workspace`
+- [x] Página `/app/(onboarding)/create-workspace` — formulário de criação do primeiro workspace
 - [ ] Salvar `workspace_id` ativo no cookie/session
 - [ ] `WorkspaceSwitcher` funcional — listar workspaces do usuário e alternar
 - [ ] Página `/app/(app)/settings/workspace` — configurações do workspace (nome, logo)
