@@ -51,18 +51,22 @@
 **Objetivo:** Página pública de marketing completa e responsiva, sem integração de dados.
 
 ### Entregas
-- [ ] Criar `/app/(marketing)/layout.tsx` — layout público (sem sidebar)
-- [ ] Criar `/app/(marketing)/page.tsx` — landing page principal
-- [ ] Seção **Hero**: headline, subtítulo, CTA "Começar grátis" e "Ver demo", screenshot do app
-- [ ] Seção **Funcionalidades**: cards com ícones — Pipeline Kanban, Gestão de Leads, Dashboard, Multi-empresa
-- [ ] Seção **Planos e Preços**: tabela Free vs Pro com lista de features e botão de CTA
-- [ ] Seção **CTA final**: chamada para ação + formulário de e-mail (UI only)
-- [ ] Navbar pública com logo + links + botão "Entrar"
-- [ ] Footer com links e copyright
-- [ ] Responsividade completa (mobile-first)
-- [ ] Página `/app/(marketing)/pricing` — página de preços standalone
+- [x] Criar `/app/(marketing)/layout.tsx` — layout público (sem sidebar)
+- [x] Landing page em `app/page.tsx` — compõe Navbar + Hero + LogoStrip + Features + Testimonials + Pricing + CTA + Footer
+- [x] Seção **Hero**: headline com gradient text, badge animado, mesh background, 2 CTAs, 4 stats, mockup Kanban flutuante
+- [x] Seção **Logo Strip**: prova social — "Confiado por mais de 1.200 times de vendas"
+- [x] Seção **Funcionalidades**: 3 abas interativas (Pipeline Kanban, Gestão de Leads, Dashboard) com mini-UI mockups
+- [x] Seção **Depoimentos**: 3 cards com quote, métrica em destaque, avatar e estrelas (gatilho de prova social)
+- [x] Seção **Planos e Preços**: Free vs Pro com 10 features, badge "Mais popular", trust badges (SSL, sem cartão)
+- [x] Seção **CTA final**: headline com gradient, 2 botões, 3 trust items com ícones
+- [x] Navbar scroll-aware com backdrop-blur, shadow ao rolar, menu mobile
+- [x] Footer com 3 colunas (Produto, Empresa, Legal) + tagline
+- [x] Responsividade completa (mobile-first) + scroll-smooth
+- [x] Página `/pricing` — página de preços standalone via `app/(marketing)/pricing/page.tsx`
 
-**Commit final:** `feat: landing page completa com hero, features, pricing e CTA`
+> UI concluída (aula 2.6). Landing page completa e interativa: hero com mesh animado, abas interativas nas features, seção de depoimentos, navbar scroll-aware e footer expandido.
+
+**Commit final:** `feat: landing page completa com hero, features, pricing e CTA` ✅
 
 ---
 
@@ -71,15 +75,17 @@
 **Objetivo:** Dashboard com todos os componentes visuais usando dados mockados.
 
 ### Entregas
-- [ ] Criar tipos em `types/dashboard.ts` (MetricCard, FunnelData, Deal)
-- [ ] Criar dados mock em `lib/mock/dashboard.ts`
-- [ ] Componente `MetricCard` — card com título, valor, variação percentual e ícone
-- [ ] Grid de 4 MetricCards: Total de Leads, Negócios Abertos, Valor do Pipeline, Taxa de Conversão
-- [ ] Componente `SalesFunnel` com Recharts (BarChart ou FunnelChart) — etapas do pipeline
-- [ ] Componente `UpcomingDeals` — lista de negócios com prazo próximo (tabela/cards)
-- [ ] Layout responsivo do dashboard em grid
+- [x] Criar tipos em `types/dashboard.ts` (MetricCard, FunnelData, Deal)
+- [x] Criar dados mock em `lib/mock/dashboard.ts`
+- [x] Componente `MetricCard` — card com título, valor, variação percentual e ícone
+- [x] Grid de 4 MetricCards: Total de Leads, Negócios Abertos, Valor do Pipeline, Taxa de Conversão
+- [x] Componente `SalesFunnel` com Recharts (BarChart ou FunnelChart) — etapas do pipeline
+- [x] Componente `UpcomingDeals` — lista de negócios com prazo próximo (tabela/cards)
+- [x] Layout responsivo do dashboard em grid
 
-**Commit final:** `feat: dashboard UI com métricas, funil Recharts e negócios próximos`
+> UI concluída (aula 2.5). Métricas mockadas, funil Recharts e lista de negócios próximos.
+
+**Commit final:** `feat: dashboard UI com métricas, funil Recharts e negócios próximos` ✅
 
 ---
 
