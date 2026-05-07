@@ -143,7 +143,7 @@
 **Objetivo:** Login, cadastro e proteção de rotas funcionando com Supabase Auth.
 
 ### Entregas
-- [ ] Criar projeto Supabase e configurar variáveis de ambiente
+- [x] Criar projeto Supabase e configurar variáveis de ambiente
 - [x] Criar `/app/(auth)/login/page.tsx` — formulário de login (e-mail + senha)
 - [x] Criar `/app/(auth)/signup/page.tsx` — formulário de cadastro
 - [x] Criar `/app/(auth)/layout.tsx` — layout público de auth (centralizado, sem sidebar)
@@ -166,7 +166,8 @@
 **Objetivo:** Criação de workspace no primeiro acesso, troca de workspace e sistema de convites por e-mail.
 
 ### Entregas
-- [ ] Schema Supabase: tabelas `workspaces`, `workspace_members` (role: admin/member)
+- [x] Schema Supabase: tabelas `workspaces`, `workspace_members`, `workspace_invites` (role: admin/member)
+- [x] RLS policies para `workspaces`, `workspace_members`, `workspace_invites`
 - [x] Onboarding flow: após cadastro, redirecionar para `/create-workspace`
 - [x] Página `/app/(onboarding)/create-workspace` — formulário de criação do primeiro workspace
 - [ ] Salvar `workspace_id` ativo no cookie/session
@@ -176,7 +177,6 @@
 - [ ] Modal `InviteMember` — convidar por e-mail (gera token de convite)
 - [ ] Rota `/app/invite/[token]` — aceitar convite e entrar no workspace
 - [ ] Envio de e-mail de convite via Resend
-- [ ] RLS básica no Supabase: policies de leitura/escrita por `workspace_id`
 
 **Commit final:** `feat: multi-workspace com onboarding, convites por e-mail Resend e RLS base`
 
@@ -187,8 +187,8 @@
 **Objetivo:** CRUD completo de leads e atividades conectado ao Supabase com RLS.
 
 ### Entregas
-- [ ] Schema Supabase: tabelas `leads`, `activities` com `workspace_id`
-- [ ] RLS policies para `leads` e `activities` (leitura/escrita apenas dentro do workspace)
+- [x] Schema Supabase: tabelas `leads`, `activities` com `workspace_id`
+- [x] RLS policies para `leads` e `activities` (leitura/escrita apenas dentro do workspace)
 - [ ] `lib/leads.ts` — funções de acesso ao banco (getLeads, getLead, createLead, updateLead, deleteLead)
 - [ ] `lib/activities.ts` — funções (getActivities, createActivity)
 - [ ] Server Actions em `app/(app)/leads/actions.ts`
@@ -208,8 +208,8 @@
 **Objetivo:** Negócios persistidos no banco, drag-and-drop com atualização de etapa em tempo real.
 
 ### Entregas
-- [ ] Schema Supabase: tabela `deals` com campos (title, value, stage, lead_id, owner_id, due_date, workspace_id)
-- [ ] RLS policies para `deals`
+- [x] Schema Supabase: tabela `deals` com campos (title, value, stage, lead_id, owner_id, due_date, workspace_id, position)
+- [x] RLS policies para `deals`
 - [ ] `lib/deals.ts` — funções (getDeals, getDeal, createDeal, updateDeal, updateDealStage, deleteDeal)
 - [ ] Server Actions em `app/(app)/pipeline/actions.ts`
 - [ ] Conectar `KanbanBoard` ao banco (substituir mock)
@@ -245,7 +245,9 @@
 
 ### Entregas
 - [ ] Criar produtos e preços no Stripe Dashboard (Free e Pro R$49/mês)
-- [ ] Schema Supabase: coluna `plan` e `stripe_customer_id` em `workspaces`
+- [x] Schema Supabase: coluna `plan` e `stripe_customer_id` em `workspaces`
+- [x] Schema Supabase: tabela `subscriptions` espelhando estado do Stripe
+- [x] RLS policies para `subscriptions` (leitura para membros; escrita exclusiva via service_role)
 - [ ] `lib/stripe.ts` — cliente Stripe + funções helpers
 - [ ] Página `/app/(app)/settings/billing` — exibir plano atual e botão de upgrade
 - [ ] Route Handler `/app/api/stripe/checkout/route.ts` — criar Stripe Checkout Session
