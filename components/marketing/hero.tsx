@@ -213,8 +213,7 @@ export function Hero() {
           >
             O CRM que seu time{" "}
             <span
-              className="bg-clip-text text-transparent"
-              style={{ backgroundImage: "linear-gradient(135deg, oklch(0.72 0.22 265), oklch(0.78 0.18 230))" }}
+              className="bg-clip-text text-transparent hero-gradient-text"
             >
               vai realmente usar.
             </span>
@@ -248,7 +247,7 @@ export function Hero() {
               href="#features"
               className={cn(
                 buttonVariants({ variant: "outline", size: "lg" }),
-                "gap-2 px-6 h-12 text-base border-white/15 hover:border-white/25 hover:bg-white/5"
+                "gap-2 px-6 h-12 text-base"
               )}
             >
               <Play className="size-3.5 fill-current" />
@@ -270,18 +269,13 @@ export function Hero() {
           className="hero-el mx-auto mt-14 max-w-3xl"
           style={{ animationDelay: "400ms" }}
         >
-          <div className="grid grid-cols-2 gap-px overflow-hidden rounded-2xl border border-white/8 bg-white/8 sm:grid-cols-4">
+          <div className="grid grid-cols-2 gap-px overflow-hidden rounded-2xl border border-border bg-border sm:grid-cols-4">
             {stats.map((stat) => (
               <div
                 key={stat.value}
-                className="flex flex-col items-center gap-1 bg-[oklch(0.17_0_0)] px-5 py-6 text-center"
+                className="flex flex-col items-center gap-1 bg-card px-5 py-6 text-center"
               >
-                <span
-                  className="text-3xl font-black tracking-tighter bg-clip-text text-transparent sm:text-4xl"
-                  style={{
-                    backgroundImage: "linear-gradient(135deg, oklch(0.72 0.22 265), oklch(0.82 0.16 240))",
-                  }}
-                >
+                <span className="text-3xl font-black tracking-tighter text-primary sm:text-4xl">
                   {stat.value}
                 </span>
                 <span className="text-xs font-medium text-foreground/80">{stat.label}</span>
