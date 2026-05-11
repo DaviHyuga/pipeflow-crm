@@ -59,6 +59,8 @@ export function LeadDetailView({ lead }: LeadDetailViewProps) {
       company: updated.company,
       role: updated.role,
       status: updated.status,
+      notes: updated.notes,
+      estimatedValue: updated.estimatedValue,
     })
     router.refresh()
   }
@@ -156,7 +158,7 @@ export function LeadDetailView({ lead }: LeadDetailViewProps) {
         </div>
       </div>
 
-      <LeadForm open={editOpen} onOpenChange={setEditOpen} lead={lead} onSave={handleSave} />
+      <LeadForm open={editOpen} onOpenChange={setEditOpen} lead={lead} ownerDisplay={lead.owner} onSave={handleSave} />
 
       <AddActivityModal
         open={addActivityOpen}

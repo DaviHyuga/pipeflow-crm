@@ -47,8 +47,11 @@ export async function proxy(request: NextRequest) {
   }
 
   if (user && isAuthRoute) {
+    // Respeita ?next= para redirecionar após login (ex.: aceitar convite)
+    const next = request.nextUrl.searchParams.get('next')
     const url = request.nextUrl.clone()
-    url.pathname = '/dashboard'
+    url.pathname = next && next.startsWith('/') ? next : '/dashboard'
+    url.search = ''
     return NextResponse.redirect(url)
   }
 

@@ -15,6 +15,7 @@ export interface Activity {
   title: string
   description: string
   date: string
+  scheduledDate: string
   author: string
 }
 
@@ -27,6 +28,8 @@ export interface Lead {
   role: string
   status: LeadStatus
   owner: string
+  notes: string
+  estimatedValue: number
   createdAt: string
   activities: Activity[]
 }

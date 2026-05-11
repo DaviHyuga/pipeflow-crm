@@ -19,6 +19,8 @@ function rowToLead(row: LeadRow, ownerDisplay: string): Lead {
     role: row.role ?? '',
     status: row.status as LeadStatus,
     owner: ownerDisplay,
+    notes: row.notes ?? '',
+    estimatedValue: Number(row.estimated_value ?? 0),
     createdAt: row.created_at.split('T')[0],
     activities: [],
   }
@@ -32,6 +34,7 @@ function rowToActivity(row: ActivityRow, authorDisplay: string): Activity {
     title: row.title,
     description: row.description ?? '',
     date: row.created_at.split('T')[0],
+    scheduledDate: row.scheduled_date ?? '',
     author: authorDisplay,
   }
 }
@@ -101,6 +104,8 @@ export async function createLead(
     company?: string
     role?: string
     status?: string
+    notes?: string
+    estimatedValue?: number
   },
 ): Promise<Lead | null> {
   const supabase = await createClient()
@@ -118,7 +123,8 @@ export async function createLead(
     company: fields.company || null,
     role: fields.role || null,
     status: (fields.status as LeadStatus) ?? 'novo',
-    notes: null,
+    notes: fields.notes || null,
+    estimated_value: fields.estimatedValue ?? 0,
   }
 
   const { data, error } = await supabase.from('leads').insert(insert).select().single()
@@ -136,6 +142,8 @@ export async function updateLead(
     company?: string
     role?: string
     status?: string
+    notes?: string
+    estimatedValue?: number
   },
 ): Promise<Lead | null> {
   const supabase = await createClient()
@@ -151,6 +159,8 @@ export async function updateLead(
   if (fields.company !== undefined) update.company = fields.company || null
   if (fields.role !== undefined) update.role = fields.role || null
   if (fields.status !== undefined) update.status = fields.status as LeadStatus
+  if (fields.notes !== undefined) update.notes = fields.notes || null
+  if (fields.estimatedValue !== undefined) update.estimated_value = fields.estimatedValue
 
   const { data, error } = await supabase
     .from('leads')
@@ -172,7 +182,7 @@ export async function deleteLead(workspaceId: string, leadId: string): Promise<v
 export async function createActivity(
   workspaceId: string,
   userId: string,
-  fields: { leadId: string; type: string; title: string; description?: string },
+  fields: { leadId: string; type: string; title: string; description?: string; scheduledDate?: string },
 ): Promise<void> {
   const supabase = await createClient()
 
@@ -183,6 +193,7 @@ export async function createActivity(
     type: fields.type as ActivityType,
     title: fields.title,
     description: fields.description || null,
+    scheduled_date: fields.scheduledDate || null,
   }
 
   await supabase.from('activities').insert(insert)

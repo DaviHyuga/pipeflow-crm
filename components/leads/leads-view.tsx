@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
 import { Lead, LeadStatus } from "@/types/lead"
@@ -56,9 +56,10 @@ interface LeadsViewProps {
   leads: Lead[]
   currentSearch: string
   currentStatus: string
+  ownerDisplay: string
 }
 
-export function LeadsView({ leads, currentSearch, currentStatus }: LeadsViewProps) {
+export function LeadsView({ leads, currentSearch, currentStatus, ownerDisplay }: LeadsViewProps) {
   const router = useRouter()
   const [search, setSearch] = useState(currentSearch)
   const [statusFilter, setStatusFilter] = useState(currentStatus)
@@ -66,13 +67,15 @@ export function LeadsView({ leads, currentSearch, currentStatus }: LeadsViewProp
   const [selectedLead, setSelectedLead] = useState<Lead | null>(null)
   const [deleteTarget, setDeleteTarget] = useState<Lead | null>(null)
   const [isPending, setIsPending] = useState(false)
+  const statusFilterRef = useRef(statusFilter)
+  statusFilterRef.current = statusFilter
 
   // Debounced search → URL update
   useEffect(() => {
     const timer = setTimeout(() => {
       const params = new URLSearchParams()
       if (search) params.set("q", search)
-      if (statusFilter !== "all") params.set("status", statusFilter)
+      if (statusFilterRef.current !== "all") params.set("status", statusFilterRef.current)
       router.push(`/leads?${params.toString()}`)
     }, 400)
     return () => clearTimeout(timer)
@@ -108,6 +111,8 @@ export function LeadsView({ leads, currentSearch, currentStatus }: LeadsViewProp
           company: saved.company,
           role: saved.role,
           status: saved.status,
+          notes: saved.notes,
+          estimatedValue: saved.estimatedValue,
         })
       } else {
         await createLeadAction({
@@ -117,6 +122,8 @@ export function LeadsView({ leads, currentSearch, currentStatus }: LeadsViewProp
           company: saved.company,
           role: saved.role,
           status: saved.status,
+          notes: saved.notes,
+          estimatedValue: saved.estimatedValue,
         })
       }
       router.refresh()
@@ -285,11 +292,12 @@ export function LeadsView({ leads, currentSearch, currentStatus }: LeadsViewProp
         )}
       </div>
 
-      {/* Form Sheet */}
+      {/* Form Dialog */}
       <LeadForm
         open={formOpen}
         onOpenChange={setFormOpen}
         lead={selectedLead}
+        ownerDisplay={ownerDisplay}
         onSave={handleSave}
       />
 

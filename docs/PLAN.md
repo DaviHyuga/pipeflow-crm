@@ -172,70 +172,67 @@
 - [x] Página `/app/(onboarding)/create-workspace` — formulário de criação do primeiro workspace
 - [x] Salvar `workspace_id` ativo no cookie/session
 - [x] `WorkspaceSwitcher` funcional — listar workspaces do usuário e alternar
-- [ ] Página `/app/(app)/settings/workspace` — configurações do workspace (nome, logo)
-- [ ] Página `/app/(app)/settings/members` — listar membros e papéis
-- [ ] Modal `InviteMember` — convidar por e-mail (gera token de convite)
-- [ ] Rota `/app/invite/[token]` — aceitar convite e entrar no workspace
-- [ ] Envio de e-mail de convite via Resend
+- [x] Página `/app/(app)/settings/workspace` — configurações do workspace (nome, logo)
+- [x] Página `/app/(app)/settings/members` — listar membros e papéis
+- [x] Modal `InviteMember` — convidar por e-mail (gera token de convite)
+- [x] Rota `/invite/[token]` — aceitar convite e entrar no workspace
+- [x] Envio de e-mail de convite via Resend
+- [x] Limite plano Free: máximo 2 membros com banner de upgrade
+- [x] Settings layout com sub-nav (Workspace, Membros, Faturamento)
+- [x] `proxy.ts` suporta `?next=` redirect após login
 
-**Commit final:** `feat: multi-workspace com onboarding, convites por e-mail Resend e RLS base`
+**Commit final:** `feat: colaboração — convites por e-mail, membros, limite Free, settings (aula 3.5)`
 
 ---
 
-## Milestone 08 — Backend: Leads & Atividades
-**Branch:** `feat/milestone-008-leads-backend`
+## Milestone 08 — Backend: Leads & Atividades ✅
+**Branch:** `feat/leads-data`
 **Objetivo:** CRUD completo de leads e atividades conectado ao Supabase com RLS.
 
 ### Entregas
 - [x] Schema Supabase: tabelas `leads`, `activities` com `workspace_id`
-- [x] RLS policies para `leads` e `activities` (leitura/escrita apenas dentro do workspace)
-- [ ] `lib/leads.ts` — funções de acesso ao banco (getLeads, getLead, createLead, updateLead, deleteLead)
-- [ ] `lib/activities.ts` — funções (getActivities, createActivity)
-- [ ] Server Actions em `app/(app)/leads/actions.ts`
-- [ ] Conectar listagem de leads à base real (substituir mock)
-- [ ] Conectar formulário de criação/edição de lead ao banco
-- [ ] Busca e filtros funcionando via query params + Supabase
-- [ ] Conectar página de detalhe do lead ao banco
-- [ ] Conectar `ActivityTimeline` ao banco
-- [ ] Formulário `AddActivity` salvando no banco
+- [x] RLS policies para `leads` e `activities`
+- [x] `lib/leads.ts` — getLeads, getLead (com activities), createLead, updateLead, deleteLead, createActivity
+- [x] Server Actions em `app/(app)/leads/actions.ts`
+- [x] Listagem de leads buscando do Supabase com filtro por status e busca ilike
+- [x] Busca e filtros via URL params + Supabase (debounced, server-side)
+- [x] Página de detalhe do lead com dados reais
+- [x] ActivityTimeline com atividades do banco
+- [x] AddActivityModal salvando no banco via Server Action + router.refresh()
 
-**Commit final:** `feat: CRUD de leads e atividades conectado ao Supabase com RLS`
+**Commit final:** `feat: leads, deals e dashboard com dados reais do Supabase (aula 3.4)` ✅
 
 ---
 
-## Milestone 09 — Backend: Pipeline Kanban
-**Branch:** `feat/milestone-009-pipeline-backend`
-**Objetivo:** Negócios persistidos no banco, drag-and-drop com atualização de etapa em tempo real.
+## Milestone 09 — Backend: Pipeline Kanban ✅
+**Branch:** `feat/leads-data`
+**Objetivo:** Negócios persistidos no banco, drag-and-drop com atualização de etapa.
 
 ### Entregas
-- [x] Schema Supabase: tabela `deals` com campos (title, value, stage, lead_id, owner_id, due_date, workspace_id, position)
+- [x] Schema Supabase: tabela `deals` com position, stage, lead_id, owner_id
 - [x] RLS policies para `deals`
-- [ ] `lib/deals.ts` — funções (getDeals, getDeal, createDeal, updateDeal, updateDealStage, deleteDeal)
-- [ ] Server Actions em `app/(app)/pipeline/actions.ts`
-- [ ] Conectar `KanbanBoard` ao banco (substituir mock)
-- [ ] Persistir mudança de etapa após drag-and-drop (Server Action ou Route Handler)
-- [ ] Formulário `DealForm` salvando no banco
-- [ ] Vincular deal ao lead (`lead_id`)
-- [ ] Conectar `DealCard` ao detalhe do lead na página de leads
+- [x] `lib/deals.ts` — getDeals (join leads), createDeal, updateDeal, updateDealStage, deleteDeal
+- [x] Server Actions em `app/(app)/pipeline/actions.ts`
+- [x] KanbanBoard com dados reais (initialDeals prop da página)
+- [x] Drag-and-drop persiste stage + position via updateDealStageAction (fire & forget)
+- [x] DealForm com lead picker real (workspaceLeads prop)
+- [x] Create/edit/delete deals persistidos no banco
 
-**Commit final:** `feat: pipeline Kanban persistido no Supabase com drag-and-drop e RLS`
+**Commit final:** `feat: leads, deals e dashboard com dados reais do Supabase (aula 3.4)` ✅
 
 ---
 
-## Milestone 10 — Backend: Dashboard com Dados Reais
-**Branch:** `feat/milestone-010-dashboard-backend`
+## Milestone 10 — Backend: Dashboard com Dados Reais ✅
+**Branch:** `feat/leads-data`
 **Objetivo:** Dashboard exibindo métricas reais calculadas a partir do banco de dados.
 
 ### Entregas
-- [ ] `lib/metrics.ts` — queries agregadas (count leads, sum pipeline value, conversion rate)
-- [ ] Conectar MetricCards a dados reais do Supabase
-- [ ] Query de funil: agrupar deals por stage para o gráfico Recharts
-- [ ] Conectar `SalesFunnel` a dados reais
-- [ ] Query de "negócios com prazo próximo" filtrada pelo usuário logado
-- [ ] Conectar `UpcomingDeals` ao banco
-- [ ] Otimizar queries com índices no Supabase (seguir `supabase-postgres-best-practices`)
+- [x] `lib/metrics.ts` — count leads, sum pipeline value, conversion rate, funil, upcoming deals
+- [x] MetricCards com dados reais do Supabase
+- [x] SalesFunnel com deals agrupados por stage do banco
+- [x] UpcomingDeals com deals reais (due_date ordenado asc, limit 6)
 
-**Commit final:** `feat: dashboard com métricas reais do Supabase e queries otimizadas`
+**Commit final:** `feat: leads, deals e dashboard com dados reais do Supabase (aula 3.4)` ✅
 
 ---
 

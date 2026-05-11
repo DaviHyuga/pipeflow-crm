@@ -29,6 +29,8 @@ export async function createLeadAction(data: {
   company: string
   role: string
   status: string
+  notes: string
+  estimatedValue: number
 }): Promise<Lead | null> {
   const { userId, workspaceId } = await getContext()
   const lead = await createLead(workspaceId, userId, data)
@@ -45,6 +47,8 @@ export async function updateLeadAction(
     company: string
     role: string
     status: string
+    notes: string
+    estimatedValue: number
   },
 ): Promise<Lead | null> {
   const { workspaceId } = await getContext()
@@ -65,6 +69,7 @@ export async function createActivityAction(data: {
   type: string
   title: string
   description: string
+  scheduledDate: string
 }): Promise<void> {
   const { userId, workspaceId } = await getContext()
   await createActivity(workspaceId, userId, data)
