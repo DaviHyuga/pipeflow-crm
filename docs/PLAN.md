@@ -51,18 +51,22 @@
 **Objetivo:** Página pública de marketing completa e responsiva, sem integração de dados.
 
 ### Entregas
-- [ ] Criar `/app/(marketing)/layout.tsx` — layout público (sem sidebar)
-- [ ] Criar `/app/(marketing)/page.tsx` — landing page principal
-- [ ] Seção **Hero**: headline, subtítulo, CTA "Começar grátis" e "Ver demo", screenshot do app
-- [ ] Seção **Funcionalidades**: cards com ícones — Pipeline Kanban, Gestão de Leads, Dashboard, Multi-empresa
-- [ ] Seção **Planos e Preços**: tabela Free vs Pro com lista de features e botão de CTA
-- [ ] Seção **CTA final**: chamada para ação + formulário de e-mail (UI only)
-- [ ] Navbar pública com logo + links + botão "Entrar"
-- [ ] Footer com links e copyright
-- [ ] Responsividade completa (mobile-first)
-- [ ] Página `/app/(marketing)/pricing` — página de preços standalone
+- [x] Criar `/app/(marketing)/layout.tsx` — layout público (sem sidebar)
+- [x] Landing page em `app/page.tsx` — compõe Navbar + Hero + LogoStrip + Features + Testimonials + Pricing + CTA + Footer
+- [x] Seção **Hero**: headline com gradient text, badge animado, mesh background, 2 CTAs, 4 stats, mockup Kanban flutuante
+- [x] Seção **Logo Strip**: prova social — "Confiado por mais de 1.200 times de vendas"
+- [x] Seção **Funcionalidades**: 3 abas interativas (Pipeline Kanban, Gestão de Leads, Dashboard) com mini-UI mockups
+- [x] Seção **Depoimentos**: 3 cards com quote, métrica em destaque, avatar e estrelas (gatilho de prova social)
+- [x] Seção **Planos e Preços**: Free vs Pro com 10 features, badge "Mais popular", trust badges (SSL, sem cartão)
+- [x] Seção **CTA final**: headline com gradient, 2 botões, 3 trust items com ícones
+- [x] Navbar scroll-aware com backdrop-blur, shadow ao rolar, menu mobile
+- [x] Footer com 3 colunas (Produto, Empresa, Legal) + tagline
+- [x] Responsividade completa (mobile-first) + scroll-smooth
+- [x] Página `/pricing` — página de preços standalone via `app/(marketing)/pricing/page.tsx`
 
-**Commit final:** `feat: landing page completa com hero, features, pricing e CTA`
+> UI concluída (aula 2.6). Landing page completa e interativa: hero com mesh animado, abas interativas nas features, seção de depoimentos, navbar scroll-aware e footer expandido.
+
+**Commit final:** `feat: landing page completa com hero, features, pricing e CTA` ✅
 
 ---
 
@@ -71,15 +75,17 @@
 **Objetivo:** Dashboard com todos os componentes visuais usando dados mockados.
 
 ### Entregas
-- [ ] Criar tipos em `types/dashboard.ts` (MetricCard, FunnelData, Deal)
-- [ ] Criar dados mock em `lib/mock/dashboard.ts`
-- [ ] Componente `MetricCard` — card com título, valor, variação percentual e ícone
-- [ ] Grid de 4 MetricCards: Total de Leads, Negócios Abertos, Valor do Pipeline, Taxa de Conversão
-- [ ] Componente `SalesFunnel` com Recharts (BarChart ou FunnelChart) — etapas do pipeline
-- [ ] Componente `UpcomingDeals` — lista de negócios com prazo próximo (tabela/cards)
-- [ ] Layout responsivo do dashboard em grid
+- [x] Criar tipos em `types/dashboard.ts` (MetricCard, FunnelData, Deal)
+- [x] Criar dados mock em `lib/mock/dashboard.ts`
+- [x] Componente `MetricCard` — card com título, valor, variação percentual e ícone
+- [x] Grid de 4 MetricCards: Total de Leads, Negócios Abertos, Valor do Pipeline, Taxa de Conversão
+- [x] Componente `SalesFunnel` com Recharts (BarChart ou FunnelChart) — etapas do pipeline
+- [x] Componente `UpcomingDeals` — lista de negócios com prazo próximo (tabela/cards)
+- [x] Layout responsivo do dashboard em grid
 
-**Commit final:** `feat: dashboard UI com métricas, funil Recharts e negócios próximos`
+> UI concluída (aula 2.5). Métricas mockadas, funil Recharts e lista de negócios próximos.
+
+**Commit final:** `feat: dashboard UI com métricas, funil Recharts e negócios próximos` ✅
 
 ---
 
@@ -88,22 +94,24 @@
 **Objetivo:** Tela de listagem e detalhe de leads completa com dados mockados.
 
 ### Entregas
-- [ ] Criar tipos em `types/lead.ts` (Lead, Activity, ActivityType)
-- [ ] Criar dados mock em `lib/mock/leads.ts`
-- [ ] Página `/app/(app)/leads` — listagem de leads
-  - [ ] Tabela/lista com colunas: nome, empresa, cargo, status, responsável, data
-  - [ ] Barra de busca por nome/empresa
-  - [ ] Filtros por status e responsável (dropdowns)
-  - [ ] Botão "Novo Lead" abrindo modal/sheet
-  - [ ] Badge de status colorido por etapa
-- [ ] Modal/Sheet `LeadForm` — formulário de criação/edição de lead (nome, e-mail, telefone, empresa, cargo, status)
-- [ ] Página `/app/(app)/leads/[id]` — detalhe do lead
-  - [ ] Header com nome, empresa, cargo e status
-  - [ ] Seção de informações de contato
-  - [ ] Componente `ActivityTimeline` — lista cronológica de atividades
-  - [ ] Modal `AddActivity` — formulário para registrar ligação/e-mail/reunião/nota
+- [x] Criar tipos em `types/lead.ts` (Lead, Activity, ActivityType)
+- [x] Criar dados mock em `lib/mock/leads.ts`
+- [x] Página `/app/(app)/leads` — listagem de leads
+  - [x] Tabela/lista com colunas: nome, empresa, cargo, status, responsável, data
+  - [x] Barra de busca por nome/empresa
+  - [x] Filtros por status e responsável (dropdowns)
+  - [x] Botão "Novo Lead" abrindo modal/sheet
+  - [x] Badge de status colorido por etapa
+- [x] Modal/Sheet `LeadForm` — formulário de criação/edição de lead (nome, e-mail, telefone, empresa, cargo, status)
+- [x] Página `/app/(app)/leads/[id]` — detalhe do lead
+  - [x] Header com nome, empresa, cargo e status
+  - [x] Seção de informações de contato
+  - [x] Componente `ActivityTimeline` — lista cronológica de atividades
+  - [x] Modal `AddActivity` — formulário para registrar ligação/e-mail/reunião/nota
 
-**Commit final:** `feat: UI de leads com listagem, busca, filtros, detalhe e timeline de atividades`
+> UI concluída (aula 2.3). Inclui exclusão com confirmação e 12 leads brasileiros mockados.
+
+**Commit final:** `feat: UI de leads com listagem, busca, filtros, detalhe e timeline de atividades` ✅
 
 ---
 
@@ -112,19 +120,21 @@
 **Objetivo:** Kanban drag-and-drop completo com @dnd-kit usando dados mockados.
 
 ### Entregas
-- [ ] Criar tipos em `types/pipeline.ts` (Stage, Deal, KanbanBoard)
-- [ ] Criar dados mock em `lib/mock/pipeline.ts`
-- [ ] Página `/app/(app)/pipeline` — board Kanban
-- [ ] Componente `KanbanBoard` — container do board com DndContext
-- [ ] Componente `KanbanColumn` — coluna por etapa (Novo Lead, Contato Realizado, Proposta Enviada, Negociação, Fechado Ganho, Fechado Perdido)
-- [ ] Componente `DealCard` — card arrastável com título, valor (R$), lead vinculado, responsável, prazo
-- [ ] Drag-and-drop funcional entre colunas com `@dnd-kit/sortable`
-- [ ] Estado otimista no frontend (mover card sem aguardar API)
-- [ ] Modal `DealForm` — criar/editar negócio (título, valor, lead vinculado, responsável, prazo, etapa)
-- [ ] Botão "Novo Negócio" em cada coluna
-- [ ] Indicador visual de valor total por coluna
+- [x] Criar tipos em `types/pipeline.ts` (Stage, Deal, KanbanBoard)
+- [x] Criar dados mock em `lib/mock/pipeline.ts`
+- [x] Página `/app/(app)/pipeline` — board Kanban
+- [x] Componente `KanbanBoard` — container do board com DndContext
+- [x] Componente `KanbanColumn` — coluna por etapa (Novo Lead, Contato Realizado, Proposta Enviada, Negociação, Fechado Ganho, Fechado Perdido)
+- [x] Componente `DealCard` — card arrastável com título, valor (R$), lead vinculado, responsável, prazo
+- [x] Drag-and-drop funcional entre colunas com `@dnd-kit/sortable`
+- [x] Estado otimista no frontend (mover card sem aguardar API)
+- [x] Modal `DealForm` — criar/editar negócio (título, valor, lead vinculado, responsável, prazo, etapa)
+- [x] Botão "Novo Negócio" em cada coluna
+- [x] Indicador visual de valor total por coluna
 
-**Commit final:** `feat: Kanban pipeline UI com drag-and-drop @dnd-kit e cards de negócios`
+> UI concluída (aula 2.4). 16 deals mockados, drag entre colunas e dentro da coluna, hover colorido por etapa, stagger animation.
+
+**Commit final:** `feat: Kanban pipeline UI com drag-and-drop @dnd-kit e cards de negócios` ✅
 
 ---
 
@@ -133,7 +143,7 @@
 **Objetivo:** Login, cadastro e proteção de rotas funcionando com Supabase Auth.
 
 ### Entregas
-- [ ] Criar projeto Supabase e configurar variáveis de ambiente
+- [x] Criar projeto Supabase e configurar variáveis de ambiente
 - [x] Criar `/app/(auth)/login/page.tsx` — formulário de login (e-mail + senha)
 - [x] Criar `/app/(auth)/signup/page.tsx` — formulário de cadastro
 - [x] Criar `/app/(auth)/layout.tsx` — layout público de auth (centralizado, sem sidebar)
@@ -156,7 +166,8 @@
 **Objetivo:** Criação de workspace no primeiro acesso, troca de workspace e sistema de convites por e-mail.
 
 ### Entregas
-- [ ] Schema Supabase: tabelas `workspaces`, `workspace_members` (role: admin/member)
+- [x] Schema Supabase: tabelas `workspaces`, `workspace_members`, `workspace_invites` (role: admin/member)
+- [x] RLS policies para `workspaces`, `workspace_members`, `workspace_invites`
 - [x] Onboarding flow: após cadastro, redirecionar para `/create-workspace`
 - [x] Página `/app/(onboarding)/create-workspace` — formulário de criação do primeiro workspace
 - [ ] Salvar `workspace_id` ativo no cookie/session
@@ -166,7 +177,6 @@
 - [ ] Modal `InviteMember` — convidar por e-mail (gera token de convite)
 - [ ] Rota `/app/invite/[token]` — aceitar convite e entrar no workspace
 - [ ] Envio de e-mail de convite via Resend
-- [ ] RLS básica no Supabase: policies de leitura/escrita por `workspace_id`
 
 **Commit final:** `feat: multi-workspace com onboarding, convites por e-mail Resend e RLS base`
 
@@ -177,8 +187,8 @@
 **Objetivo:** CRUD completo de leads e atividades conectado ao Supabase com RLS.
 
 ### Entregas
-- [ ] Schema Supabase: tabelas `leads`, `activities` com `workspace_id`
-- [ ] RLS policies para `leads` e `activities` (leitura/escrita apenas dentro do workspace)
+- [x] Schema Supabase: tabelas `leads`, `activities` com `workspace_id`
+- [x] RLS policies para `leads` e `activities` (leitura/escrita apenas dentro do workspace)
 - [ ] `lib/leads.ts` — funções de acesso ao banco (getLeads, getLead, createLead, updateLead, deleteLead)
 - [ ] `lib/activities.ts` — funções (getActivities, createActivity)
 - [ ] Server Actions em `app/(app)/leads/actions.ts`
@@ -198,8 +208,8 @@
 **Objetivo:** Negócios persistidos no banco, drag-and-drop com atualização de etapa em tempo real.
 
 ### Entregas
-- [ ] Schema Supabase: tabela `deals` com campos (title, value, stage, lead_id, owner_id, due_date, workspace_id)
-- [ ] RLS policies para `deals`
+- [x] Schema Supabase: tabela `deals` com campos (title, value, stage, lead_id, owner_id, due_date, workspace_id, position)
+- [x] RLS policies para `deals`
 - [ ] `lib/deals.ts` — funções (getDeals, getDeal, createDeal, updateDeal, updateDealStage, deleteDeal)
 - [ ] Server Actions em `app/(app)/pipeline/actions.ts`
 - [ ] Conectar `KanbanBoard` ao banco (substituir mock)
@@ -235,7 +245,9 @@
 
 ### Entregas
 - [ ] Criar produtos e preços no Stripe Dashboard (Free e Pro R$49/mês)
-- [ ] Schema Supabase: coluna `plan` e `stripe_customer_id` em `workspaces`
+- [x] Schema Supabase: coluna `plan` e `stripe_customer_id` em `workspaces`
+- [x] Schema Supabase: tabela `subscriptions` espelhando estado do Stripe
+- [x] RLS policies para `subscriptions` (leitura para membros; escrita exclusiva via service_role)
 - [ ] `lib/stripe.ts` — cliente Stripe + funções helpers
 - [ ] Página `/app/(app)/settings/billing` — exibir plano atual e botão de upgrade
 - [ ] Route Handler `/app/api/stripe/checkout/route.ts` — criar Stripe Checkout Session
