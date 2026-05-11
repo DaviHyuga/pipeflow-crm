@@ -2,9 +2,9 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { signup } from '@/lib/supabase/actions'
 
 interface FieldErrors {
   name?: string
@@ -40,13 +40,14 @@ function validate(
 }
 
 export default function SignupPage() {
-  const router = useRouter()
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
   const [errors, setErrors] = useState<FieldErrors>({})
+  const [globalError, setGlobalError] = useState('')
   const [loading, setLoading] = useState(false)
+  const [confirmationSent, setConfirmationSent] = useState(false)
 
   function clearFieldError(field: keyof FieldErrors) {
     if (errors[field]) setErrors((prev) => ({ ...prev, [field]: undefined }))
@@ -54,6 +55,7 @@ export default function SignupPage() {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
+    setGlobalError('')
     const next = validate(name, email, password, confirmPassword)
     if (Object.keys(next).length > 0) {
       setErrors(next)
@@ -61,10 +63,42 @@ export default function SignupPage() {
     }
 
     setLoading(true)
-    // Fake signup — substitui pelo Supabase no Milestone 06
-    await new Promise((res) => setTimeout(res, 1200))
+    const result = await signup(email, password, name)
     setLoading(false)
-    router.push('/create-workspace')
+    if (result?.error) {
+      setGlobalError(
+        result.error.includes('already registered')
+          ? 'Este e-mail já está cadastrado.'
+          : result.error,
+      )
+    } else if (result?.needsConfirmation) {
+      setConfirmationSent(true)
+    }
+  }
+
+  if (confirmationSent) {
+    return (
+      <div className="rounded-xl border border-border bg-card p-8 shadow-sm text-center">
+        <div className="mb-4 flex justify-center">
+          <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
+            <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-primary">
+              <path d="M22 13V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v12c0 1.1.9 2 2 2h8" />
+              <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7" />
+              <path d="m16 19 2 2 4-4" />
+            </svg>
+          </div>
+        </div>
+        <h2 className="text-lg font-semibold text-foreground">Confirme seu e-mail</h2>
+        <p className="mt-2 text-sm text-muted-foreground">
+          Enviamos um link de confirmação para{' '}
+          <span className="font-medium text-foreground">{email}</span>.
+          Clique no link para ativar sua conta.
+        </p>
+        <Link href="/login" className="mt-6 inline-block text-sm text-primary hover:underline">
+          Voltar para o login
+        </Link>
+      </div>
+    )
   }
 
   return (
@@ -75,6 +109,12 @@ export default function SignupPage() {
           Comece a usar o PipeFlow gratuitamente
         </p>
       </div>
+
+      {globalError && (
+        <div className="mb-4 rounded-lg border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive">
+          {globalError}
+        </div>
+      )}
 
       <form onSubmit={handleSubmit} noValidate className="space-y-4">
         <div className="space-y-1.5">

@@ -4,6 +4,7 @@ import Link from "next/link"
 import { useState, useEffect } from "react"
 import { Menu, X } from "lucide-react"
 import { Button, buttonVariants } from "@/components/ui/button"
+import { ThemeToggle } from "@/components/theme-toggle"
 import { cn } from "@/lib/utils"
 
 const navLinks = [
@@ -37,7 +38,7 @@ export function Navbar() {
           <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary shadow-lg shadow-primary/40 transition-shadow group-hover:shadow-primary/60">
             <span className="text-sm font-bold text-primary-foreground">P</span>
           </div>
-          <span className="text-[15px] font-semibold tracking-tight text-foreground">PipeFlow</span>
+          <span className={cn("text-[15px] font-semibold tracking-tight transition-colors", scrolled ? "text-white" : "text-foreground")}>PipeFlow</span>
         </Link>
 
         {/* Desktop nav */}
@@ -46,7 +47,12 @@ export function Navbar() {
             <Link
               key={link.href}
               href={link.href}
-              className="px-3.5 py-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors rounded-lg hover:bg-white/5"
+              className={cn(
+                "px-3.5 py-1.5 text-sm transition-colors rounded-lg",
+                scrolled
+                  ? "text-white/70 hover:text-white hover:bg-white/8"
+                  : "text-muted-foreground hover:text-foreground hover:bg-muted/50"
+              )}
             >
               {link.label}
             </Link>
@@ -54,8 +60,15 @@ export function Navbar() {
         </nav>
 
         {/* Desktop CTAs */}
-        <div className="hidden md:flex items-center gap-2">
-          <Link href="/login" className={cn(buttonVariants({ variant: "ghost", size: "sm" }))}>
+        <div className="hidden md:flex items-center gap-1">
+          <ThemeToggle size="icon-sm" />
+          <Link
+            href="/login"
+            className={cn(
+              buttonVariants({ variant: "ghost", size: "sm" }),
+              scrolled && "text-white/80 hover:text-white hover:bg-white/10"
+            )}
+          >
             Entrar
           </Link>
           <Link
@@ -95,6 +108,10 @@ export function Navbar() {
             </Link>
           ))}
           <div className="pt-3 flex flex-col gap-2 border-t border-white/8 mt-2">
+            <div className="flex items-center justify-between px-1 pb-1">
+              <span className="text-xs text-muted-foreground">Aparência</span>
+              <ThemeToggle size="icon-sm" />
+            </div>
             <Link
               href="/login"
               className={cn(buttonVariants({ variant: "outline", size: "sm" }), "w-full justify-center")}

@@ -52,9 +52,11 @@ export type SubscriptionStatus =
 
 // ---------------------------------------------------------------------------
 // Row types (espelham as colunas das tabelas)
+// Nota: devem ser `type` (não `interface`) para satisfazer Record<string, unknown>
+// na verificação de genéricos do Supabase com TypeScript 5.9+
 // ---------------------------------------------------------------------------
 
-export interface WorkspaceRow {
+export type WorkspaceRow = {
   id: string
   name: string
   slug: string
@@ -66,7 +68,7 @@ export interface WorkspaceRow {
   updated_at: string
 }
 
-export interface WorkspaceMemberRow {
+export type WorkspaceMemberRow = {
   id: string
   workspace_id: string
   user_id: string
@@ -75,7 +77,7 @@ export interface WorkspaceMemberRow {
   created_at: string
 }
 
-export interface WorkspaceInviteRow {
+export type WorkspaceInviteRow = {
   id: string
   workspace_id: string
   email: string
@@ -87,7 +89,7 @@ export interface WorkspaceInviteRow {
   created_at: string
 }
 
-export interface LeadRow {
+export type LeadRow = {
   id: string
   workspace_id: string
   name: string
@@ -102,7 +104,7 @@ export interface LeadRow {
   updated_at: string
 }
 
-export interface ActivityRow {
+export type ActivityRow = {
   id: string
   workspace_id: string
   lead_id: string
@@ -113,7 +115,7 @@ export interface ActivityRow {
   created_at: string
 }
 
-export interface DealRow {
+export type DealRow = {
   id: string
   workspace_id: string
   title: string
@@ -128,7 +130,7 @@ export interface DealRow {
   updated_at: string
 }
 
-export interface SubscriptionRow {
+export type SubscriptionRow = {
   id: string
   workspace_id: string
   stripe_subscription_id: string
@@ -145,14 +147,29 @@ export interface SubscriptionRow {
 }
 
 // ---------------------------------------------------------------------------
-// Insert types (campos opcionais ao inserir)
+// Insert types (campos com DEFAULT no banco são opcionais)
 // ---------------------------------------------------------------------------
 
-export type WorkspaceInsert = Omit<WorkspaceRow, 'id' | 'created_at' | 'updated_at'> &
-  Partial<Pick<WorkspaceRow, 'id' | 'created_at' | 'updated_at'>>
+export type WorkspaceInsert = {
+  id?: string
+  name: string
+  slug: string
+  plan?: WorkspacePlan
+  stripe_customer_id?: string | null
+  stripe_subscription_id?: string | null
+  trial_ends_at?: string | null
+  created_at?: string
+  updated_at?: string
+}
 
-export type WorkspaceMemberInsert = Omit<WorkspaceMemberRow, 'id' | 'created_at'> &
-  Partial<Pick<WorkspaceMemberRow, 'id' | 'created_at'>>
+export type WorkspaceMemberInsert = {
+  id?: string
+  workspace_id: string
+  user_id: string
+  role?: WorkspaceMemberRole
+  invited_by?: string | null
+  created_at?: string
+}
 
 export type LeadInsert = Omit<LeadRow, 'id' | 'created_at' | 'updated_at'> &
   Partial<Pick<LeadRow, 'id' | 'created_at' | 'updated_at'>>
@@ -181,44 +198,66 @@ export type SubscriptionUpdate = Partial<Omit<SubscriptionRow, 'id'>>
 // Database type (compatível com createClient<Database>())
 // ---------------------------------------------------------------------------
 
-export interface Database {
+export type Database = {
   public: {
     Tables: {
       workspaces: {
         Row: WorkspaceRow
         Insert: WorkspaceInsert
         Update: WorkspaceUpdate
+        Relationships: []
       }
       workspace_members: {
         Row: WorkspaceMemberRow
         Insert: WorkspaceMemberInsert
         Update: WorkspaceMemberUpdate
+        Relationships: [
+          {
+            foreignKeyName: 'workspace_members_workspace_id_fkey'
+            columns: ['workspace_id']
+            isOneToOne: false
+            referencedRelation: 'workspaces'
+            referencedColumns: ['id']
+          },
+          {
+            foreignKeyName: 'workspace_members_user_id_fkey'
+            columns: ['user_id']
+            isOneToOne: false
+            referencedRelation: 'users'
+            referencedColumns: ['id']
+          },
+        ]
       }
       workspace_invites: {
         Row: WorkspaceInviteRow
         Insert: Omit<WorkspaceInviteRow, 'id' | 'created_at' | 'token'> &
           Partial<Pick<WorkspaceInviteRow, 'id' | 'created_at' | 'token'>>
         Update: Partial<Omit<WorkspaceInviteRow, 'id'>>
+        Relationships: []
       }
       leads: {
         Row: LeadRow
         Insert: LeadInsert
         Update: LeadUpdate
+        Relationships: []
       }
       activities: {
         Row: ActivityRow
         Insert: ActivityInsert
         Update: ActivityUpdate
+        Relationships: []
       }
       deals: {
         Row: DealRow
         Insert: DealInsert
         Update: DealUpdate
+        Relationships: []
       }
       subscriptions: {
         Row: SubscriptionRow
         Insert: SubscriptionInsert
         Update: SubscriptionUpdate
+        Relationships: []
       }
     }
     Views: {
@@ -233,6 +272,7 @@ export interface Database {
           leads_count: number
           members_count: number
         }
+        Relationships: []
       }
     }
     Functions: {

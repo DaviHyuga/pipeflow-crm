@@ -49,10 +49,7 @@ export function CTASection() {
 
             <h2 className="text-3xl font-black tracking-tight text-foreground sm:text-5xl max-w-2xl mx-auto leading-tight">
               Pronto para fechar{" "}
-              <span
-                className="bg-clip-text text-transparent"
-                style={{ backgroundImage: "linear-gradient(135deg, oklch(0.72 0.22 265), oklch(0.82 0.16 240))" }}
-              >
+              <span className="hero-gradient-text">
                 mais negócios?
               </span>
             </h2>
@@ -77,7 +74,7 @@ export function CTASection() {
                 href="/login"
                 className={cn(
                   buttonVariants({ variant: "ghost", size: "lg" }),
-                  "h-12 px-6 text-base text-muted-foreground hover:text-foreground border border-white/10 hover:border-white/20 hover:bg-white/5"
+                  "h-12 px-6 text-base text-muted-foreground hover:text-foreground border border-border hover:border-primary/30"
                 )}
               >
                 Já tenho conta
@@ -88,7 +85,7 @@ export function CTASection() {
             <div className="mt-12 flex flex-wrap items-center justify-center gap-6 sm:gap-10">
               {trustItems.map((item) => (
                 <div key={item.label} className="flex items-center gap-2.5">
-                  <div className="flex size-8 shrink-0 items-center justify-center rounded-full border border-white/10 bg-white/5">
+                  <div className="flex size-8 shrink-0 items-center justify-center rounded-full border border-border bg-muted/60">
                     <item.icon className="size-3.5 text-muted-foreground" />
                   </div>
                   <div className="text-left">

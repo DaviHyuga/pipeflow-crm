@@ -75,7 +75,7 @@ export function Pricing() {
                 "relative flex flex-col rounded-2xl border p-8 transition-all duration-300",
                 plan.highlighted
                   ? "border-primary/40 bg-primary/5 shadow-2xl shadow-primary/12"
-                  : "border-white/8 bg-card hover:border-white/14"
+                  : "border-border bg-card hover:border-border/80"
               )}
             >
               {/* Popular badge */}
@@ -109,8 +109,8 @@ export function Pricing() {
                         <Check className="size-2.5 text-emerald-400" />
                       </div>
                     ) : (
-                      <div className="flex size-4 shrink-0 items-center justify-center rounded-full bg-white/4 border border-white/8">
-                        <Minus className="size-2.5 text-white/20" />
+                      <div className="flex size-4 shrink-0 items-center justify-center rounded-full bg-muted border border-border">
+                        <Minus className="size-2.5 text-muted-foreground/40" />
                       </div>
                     )}
                     <span
@@ -149,12 +149,12 @@ export function Pricing() {
             <Shield className="size-4 text-muted-foreground/40" />
             Sem cartão de crédito
           </div>
-          <div className="h-1 w-1 rounded-full bg-white/15 hidden sm:block" />
+          <div className="h-1 w-1 rounded-full bg-border hidden sm:block" />
           <div className="flex items-center gap-2">
             <Shield className="size-4 text-muted-foreground/40" />
             Cancele a qualquer momento
           </div>
-          <div className="h-1 w-1 rounded-full bg-white/15 hidden sm:block" />
+          <div className="h-1 w-1 rounded-full bg-border hidden sm:block" />
           <div className="flex items-center gap-2">
             <Shield className="size-4 text-muted-foreground/40" />
             Dados protegidos com SSL

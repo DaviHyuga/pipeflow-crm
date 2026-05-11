@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { Menu, Bell, LogOut, Settings, User } from "lucide-react";
+import type { User as SupabaseUser } from "@supabase/supabase-js";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
@@ -20,20 +21,27 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 import { Sidebar } from "@/components/sidebar";
+import { ThemeToggle } from "@/components/theme-toggle";
+import { logout } from "@/lib/supabase/actions";
 import { cn } from "@/lib/utils";
+import type { WorkspaceWithRole } from "@/lib/workspaces";
 
-const FAKE_USER = {
-  name: "João Silva",
-  email: "joao@acmecorp.com",
-  avatar: "",
-};
+interface TopbarProps {
+  user: SupabaseUser;
+  workspaces: WorkspaceWithRole[];
+  activeWorkspaceId: string;
+}
 
-export function Topbar() {
+export function Topbar({ user, workspaces, activeWorkspaceId }: TopbarProps) {
   const [mobileOpen, setMobileOpen] = useState(false);
 
-  const initials = FAKE_USER.name
+  const displayName: string =
+    user.user_metadata?.full_name ?? user.email ?? "Usuário";
+  const email = user.email ?? "";
+  const initials = displayName
     .split(" ")
-    .map((n) => n[0])
+    .slice(0, 2)
+    .map((n: string) => n[0])
     .join("")
     .toUpperCase();
 
@@ -61,6 +69,8 @@ export function Topbar() {
 
         {/* Actions */}
         <div className="flex items-center gap-1">
+          <ThemeToggle size="icon" className="h-8 w-8" />
+
           <Button
             variant="ghost"
             size="icon"
@@ -75,12 +85,15 @@ export function Topbar() {
               className={cn(
                 "h-8 w-8 rounded-full cursor-pointer bg-transparent border-0",
                 "inline-flex items-center justify-center",
-                "outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+                "outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
               )}
               aria-label="Menu do usuário"
             >
               <Avatar className="h-7 w-7">
-                <AvatarImage src={FAKE_USER.avatar} alt={FAKE_USER.name} />
+                <AvatarImage
+                  src={user.user_metadata?.avatar_url ?? ""}
+                  alt={displayName}
+                />
                 <AvatarFallback className="text-[11px] font-semibold bg-primary/15 text-primary">
                   {initials}
                 </AvatarFallback>
@@ -90,11 +103,9 @@ export function Topbar() {
               <DropdownMenuGroup>
                 <DropdownMenuLabel className="font-normal pb-1">
                   <p className="text-sm font-semibold leading-none">
-                    {FAKE_USER.name}
+                    {displayName}
                   </p>
-                  <p className="text-xs text-muted-foreground mt-1">
-                    {FAKE_USER.email}
-                  </p>
+                  <p className="text-xs text-muted-foreground mt-1">{email}</p>
                 </DropdownMenuLabel>
               </DropdownMenuGroup>
               <DropdownMenuSeparator />
@@ -107,7 +118,10 @@ export function Topbar() {
                 Configurações
               </DropdownMenuItem>
               <DropdownMenuSeparator />
-              <DropdownMenuItem className="gap-2 cursor-pointer text-destructive focus:text-destructive focus:bg-destructive/10">
+              <DropdownMenuItem
+                onClick={() => logout()}
+                className="gap-2 cursor-pointer text-destructive focus:text-destructive focus:bg-destructive/10"
+              >
                 <LogOut className="h-4 w-4" />
                 Sair
               </DropdownMenuItem>
@@ -129,6 +143,8 @@ export function Topbar() {
           <Sidebar
             className="flex w-full border-none"
             onNavigate={() => setMobileOpen(false)}
+            workspaces={workspaces}
+            activeWorkspaceId={activeWorkspaceId}
           />
         </SheetContent>
       </Sheet>

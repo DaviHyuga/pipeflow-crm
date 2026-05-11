@@ -4,16 +4,19 @@ import { useState } from 'react'
 import Link from 'next/link'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { resetPassword } from '@/lib/supabase/actions'
 
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState('')
   const [emailError, setEmailError] = useState('')
+  const [globalError, setGlobalError] = useState('')
   const [loading, setLoading] = useState(false)
   const [sent, setSent] = useState(false)
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     setEmailError('')
+    setGlobalError('')
 
     if (!email) {
       setEmailError('E-mail é obrigatório')
@@ -25,9 +28,12 @@ export default function ForgotPasswordPage() {
     }
 
     setLoading(true)
-    // Fake reset — substitui pelo Supabase no Milestone 06
-    await new Promise((res) => setTimeout(res, 1000))
+    const result = await resetPassword(email)
     setLoading(false)
+    if (result?.error) {
+      setGlobalError(result.error)
+      return
+    }
     setSent(true)
   }
 
@@ -78,6 +84,12 @@ export default function ForgotPasswordPage() {
           Informe seu e-mail e enviaremos as instruções de recuperação.
         </p>
       </div>
+
+      {globalError && (
+        <div className="mb-4 rounded-lg border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive">
+          {globalError}
+        </div>
+      )}
 
       <form onSubmit={handleSubmit} noValidate className="space-y-4">
         <div className="space-y-1.5">

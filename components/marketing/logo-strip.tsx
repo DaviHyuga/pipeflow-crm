@@ -9,7 +9,7 @@ const companies = [
 
 export function LogoStrip() {
   return (
-    <section className="py-14 border-y border-white/6">
+    <section className="py-14 border-y border-border">
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
         <p className="text-center text-[11px] font-medium uppercase tracking-[0.2em] text-muted-foreground/40 mb-8">
           Confiado por times de vendas em toda parte
@@ -18,7 +18,7 @@ export function LogoStrip() {
           {companies.map((co) => (
             <span
               key={co.name}
-              className={`text-base text-muted-foreground/20 hover:text-muted-foreground/40 transition-colors select-none ${co.style}`}
+              className={`text-base text-muted-foreground/40 hover:text-muted-foreground/70 transition-colors select-none ${co.style}`}
             >
               {co.name}
             </span>

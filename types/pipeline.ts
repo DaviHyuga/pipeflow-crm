@@ -28,9 +28,9 @@ export type KanbanBoard = Record<StageId, Deal[]>
 
 export const STAGES: Stage[] = [
   { id: "novo_lead",          label: "Novo Lead",          color: "#5B7FFF" },
-  { id: "contato_realizado",  label: "Contato Realizado",  color: "#CAFF33" },
-  { id: "proposta_enviada",   label: "Proposta Enviada",   color: "#FF6B35" },
-  { id: "negociacao",         label: "Negociação",         color: "#A78BFA" },
+  { id: "contato_realizado",  label: "Contato Realizado",  color: "#22D3EE" },
+  { id: "proposta_enviada",   label: "Proposta Enviada",   color: "#A3E635" },
+  { id: "negociacao",         label: "Negociação",         color: "#F97316" },
   { id: "fechado_ganho",      label: "Fechado Ganho",      color: "#2ED573" },
   { id: "fechado_perdido",    label: "Fechado Perdido",    color: "#FF4757" },
 ]

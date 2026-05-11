@@ -48,76 +48,97 @@
   --radius-4xl: calc(var(--radius) * 2.6);
 }
 
+/* ─── Light mode — Salesforce-inspired: deep navy primary, off-white bg ─── */
 :root {
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
+  /* Surfaces */
+  --background: oklch(0.965 0.008 265);         /* off-white with subtle blue tint */
+  --foreground: oklch(0.13 0.04 265);            /* deep navy text */
+  --card: oklch(1 0 0);                          /* white cards */
+  --card-foreground: oklch(0.13 0.04 265);
   --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  /* PipeFlow blue */
-  --primary: oklch(0.44 0.22 265);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
+  --popover-foreground: oklch(0.13 0.04 265);
+
+  /* PipeFlow primary — deep Salesforce navy */
+  --primary: oklch(0.22 0.16 265);
+  --primary-foreground: oklch(0.98 0 0);
+
+  /* Secondary & muted */
+  --secondary: oklch(0.93 0.015 265);
+  --secondary-foreground: oklch(0.22 0.16 265);
+  --muted: oklch(0.93 0.015 265);
+  --muted-foreground: oklch(0.48 0.025 265);
+  --accent: oklch(0.93 0.015 265);
+  --accent-foreground: oklch(0.22 0.16 265);
+
+  /* Utility */
   --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.44 0.22 265);
-  --chart-1: oklch(0.44 0.22 265);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
+  --border: oklch(0.87 0.018 265);
+  --input: oklch(0.87 0.018 265);
+  --ring: oklch(0.22 0.16 265);
   --radius: 0.625rem;
-  --sidebar: oklch(0.985 0 0);
-  --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.44 0.22 265);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.97 0 0);
-  --sidebar-accent-foreground: oklch(0.205 0 0);
-  --sidebar-border: oklch(0.922 0 0);
-  --sidebar-ring: oklch(0.44 0.22 265);
+
+  /* Charts — vibrant multi-color palette */
+  --chart-1: oklch(0.44 0.22 265);
+  --chart-2: oklch(0.63 0.18 185);
+  --chart-3: oklch(0.56 0.18 300);
+  --chart-4: oklch(0.62 0.18 155);
+  --chart-5: oklch(0.65 0.20 35);
+
+  /* Sidebar — stays dark navy in both modes (like Salesforce nav) */
+  --sidebar: oklch(0.12 0.05 265);
+  --sidebar-foreground: oklch(0.92 0.005 265);
+  --sidebar-primary: oklch(0.65 0.22 215);
+  --sidebar-primary-foreground: oklch(0.98 0 0);
+  --sidebar-accent: oklch(0.20 0.06 265);
+  --sidebar-accent-foreground: oklch(0.92 0.005 265);
+  --sidebar-border: oklch(1 0 0 / 10%);
+  --sidebar-ring: oklch(0.65 0.22 215);
 }
 
+/* ─── Dark mode — deep blue-black, teal-blue primary ─── */
 .dark {
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.18 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.18 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  /* PipeFlow blue — dark mode */
-  --primary: oklch(0.62 0.22 265);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
+  /* Surfaces */
+  --background: oklch(0.095 0.028 265);          /* deep blue-black */
+  --foreground: oklch(0.965 0.005 265);           /* near-white with blue tint */
+  --card: oklch(0.14 0.03 265);                   /* navy-tinted dark card */
+  --card-foreground: oklch(0.965 0.005 265);
+  --popover: oklch(0.14 0.03 265);
+  --popover-foreground: oklch(0.965 0.005 265);
+
+  /* PipeFlow primary — vibrant teal-blue */
+  --primary: oklch(0.65 0.22 215);
+  --primary-foreground: oklch(0.98 0 0);
+
+  /* Secondary & muted */
+  --secondary: oklch(0.21 0.04 265);
+  --secondary-foreground: oklch(0.965 0.005 265);
+  --muted: oklch(0.21 0.04 265);
+  --muted-foreground: oklch(0.64 0.015 265);
+  --accent: oklch(0.21 0.04 265);
+  --accent-foreground: oklch(0.965 0.005 265);
+
+  /* Utility */
   --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
+  --border: oklch(1 0 0 / 12%);
   --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.62 0.22 265);
-  --chart-1: oklch(0.62 0.22 265);
-  --chart-2: oklch(0.556 0 0);
-  --chart-3: oklch(0.439 0 0);
-  --chart-4: oklch(0.371 0 0);
-  --chart-5: oklch(0.269 0 0);
-  /* Sidebar: dark navy-tinted */
-  --sidebar: oklch(0.145 0.01 264);
-  --sidebar-foreground: oklch(0.92 0 0);
-  --sidebar-primary: oklch(0.62 0.22 265);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.22 0.01 264);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
+  --ring: oklch(0.65 0.22 215);
+
+  /* Charts */
+  --chart-1: oklch(0.65 0.22 215);
+  --chart-2: oklch(0.75 0.18 185);
+  --chart-3: oklch(0.70 0.17 300);
+  --chart-4: oklch(0.72 0.18 155);
+  --chart-5: oklch(0.72 0.20 35);
+
+  /* Sidebar — deeper navy than background */
+  --sidebar: oklch(0.082 0.038 265);
+  --sidebar-foreground: oklch(0.92 0.005 265);
+  --sidebar-primary: oklch(0.65 0.22 215);
+  --sidebar-primary-foreground: oklch(0.98 0 0);
+  --sidebar-accent: oklch(0.18 0.05 265);
+  --sidebar-accent-foreground: oklch(0.92 0.005 265);
   --sidebar-border: oklch(1 0 0 / 8%);
-  --sidebar-ring: oklch(0.62 0.22 265);
+  --sidebar-ring: oklch(0.65 0.22 215);
 }
 
 @layer base {
@@ -130,4 +151,15 @@
   html {
     @apply font-sans scroll-smooth;
   }
+}
+
+/* ─── Marketing gradient text — adapts to light/dark ─── */
+.hero-gradient-text {
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  background-image: linear-gradient(135deg, oklch(0.40 0.22 265), oklch(0.36 0.20 220));
+}
+.dark .hero-gradient-text {
+  background-image: linear-gradient(135deg, oklch(0.72 0.22 265), oklch(0.78 0.18 230));
 }

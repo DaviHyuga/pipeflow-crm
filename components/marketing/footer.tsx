@@ -22,7 +22,7 @@ const footerLinks = {
 
 export function Footer() {
   return (
-    <footer className="border-t border-white/8 pt-16 pb-10">
+    <footer className="border-t border-border pt-16 pb-10">
       <div className="mx-auto max-w-6xl px-4 sm:px-6">
         {/* Top: logo + links */}
         <div className="grid grid-cols-2 gap-10 sm:grid-cols-4 mb-16">
@@ -62,7 +62,7 @@ export function Footer() {
         </div>
 
         {/* Bottom bar */}
-        <div className="flex flex-col items-center gap-3 border-t border-white/8 pt-8 sm:flex-row sm:justify-between">
+        <div className="flex flex-col items-center gap-3 border-t border-border pt-8 sm:flex-row sm:justify-between">
           <p className="text-xs text-muted-foreground/50">
             &copy; {new Date().getFullYear()} PipeFlow CRM. Todos os direitos reservados.
           </p>

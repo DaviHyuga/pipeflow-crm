@@ -66,7 +66,7 @@ export function Testimonials() {
             {testimonials.map((t) => (
               <div
                 key={t.name}
-                className="group relative flex flex-col rounded-2xl border border-white/8 bg-card p-7 transition-all duration-300 hover:border-white/16 hover:shadow-2xl hover:shadow-black/30 hover:-translate-y-0.5"
+                className="group relative flex flex-col rounded-2xl border border-border bg-card p-7 transition-all duration-300 hover:border-primary/25 hover:shadow-2xl hover:shadow-black/10 hover:-translate-y-0.5"
               >
                 {/* Stars */}
                 <div className="flex items-center gap-0.5 mb-5">
@@ -81,7 +81,7 @@ export function Testimonials() {
                 </blockquote>
 
                 {/* Metric highlight */}
-                <div className="flex items-center gap-3 mb-6 rounded-xl border border-white/8 bg-white/3 px-4 py-3">
+                <div className="flex items-center gap-3 mb-6 rounded-xl border border-border bg-muted/50 px-4 py-3">
                   <div>
                     <div
                       className={`text-xl font-black tracking-tight bg-gradient-to-br ${t.color} bg-clip-text text-transparent`}
@@ -93,7 +93,7 @@ export function Testimonials() {
                 </div>
 
                 {/* Author */}
-                <div className="flex items-center gap-3 pt-5 border-t border-white/8">
+                <div className="flex items-center gap-3 pt-5 border-t border-border">
                   <div
                     className={`flex size-9 shrink-0 items-center justify-center rounded-full bg-gradient-to-br ${t.color} text-xs font-bold text-white shadow-lg`}
                   >

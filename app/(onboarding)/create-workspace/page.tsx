@@ -1,9 +1,9 @@
 'use client'
 
 import { useState } from 'react'
-import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { createWorkspace } from '@/lib/workspace-actions'
 
 function toSlug(value: string) {
   return value
@@ -15,9 +15,9 @@ function toSlug(value: string) {
 }
 
 export default function CreateWorkspacePage() {
-  const router = useRouter()
   const [name, setName] = useState('')
   const [nameError, setNameError] = useState('')
+  const [globalError, setGlobalError] = useState('')
   const [loading, setLoading] = useState(false)
 
   const slug = toSlug(name)
@@ -29,6 +29,7 @@ export default function CreateWorkspacePage() {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
+    setGlobalError('')
 
     if (!name.trim()) {
       setNameError('Nome do workspace é obrigatório')
@@ -40,10 +41,15 @@ export default function CreateWorkspacePage() {
     }
 
     setLoading(true)
-    // Fake workspace creation — substitui pelo Supabase no Milestone 07
-    await new Promise((res) => setTimeout(res, 1200))
+    const result = await createWorkspace(name.trim(), slug)
     setLoading(false)
-    router.push('/dashboard')
+    if (result?.error) {
+      setGlobalError(
+        result.error.includes('duplicate') || result.error.includes('unique')
+          ? 'Já existe um workspace com esse nome. Tente outro.'
+          : result.error,
+      )
+    }
   }
 
   return (
@@ -69,6 +75,12 @@ export default function CreateWorkspacePage() {
             convidar membros depois.
           </p>
         </div>
+
+        {globalError && (
+          <div className="mb-4 rounded-lg border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive">
+            {globalError}
+          </div>
+        )}
 
         <form onSubmit={handleSubmit} noValidate className="space-y-5">
           <div className="space-y-1.5">

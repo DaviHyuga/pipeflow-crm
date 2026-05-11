@@ -192,10 +192,7 @@ export function Features() {
           </p>
           <h2 className="text-3xl font-black tracking-tight text-foreground sm:text-4xl lg:text-5xl">
             Uma plataforma, resultado em{" "}
-            <span
-              className="bg-clip-text text-transparent"
-              style={{ backgroundImage: "linear-gradient(135deg, oklch(0.72 0.22 265), oklch(0.82 0.16 240))" }}
-            >
+            <span className="hero-gradient-text">
               todo o funil
             </span>
           </h2>
@@ -214,7 +211,7 @@ export function Features() {
                 "flex shrink-0 items-center gap-1.5 rounded-lg border px-3.5 py-2 text-sm font-medium transition-all",
                 active === tab.id
                   ? "border-primary/40 bg-primary/10 text-foreground"
-                  : "border-white/8 bg-card text-muted-foreground hover:text-foreground hover:bg-white/5"
+                  : "border-border bg-card text-muted-foreground hover:text-foreground hover:bg-muted"
               )}
             >
               <tab.icon className="size-3.5" />
@@ -235,7 +232,7 @@ export function Features() {
                   "group w-full text-left rounded-2xl border p-5 transition-all duration-300",
                   active === tab.id
                     ? "border-primary/30 bg-primary/6 shadow-lg shadow-primary/8"
-                    : "border-white/6 bg-card hover:border-white/12 hover:bg-white/3"
+                    : "border-border bg-card hover:border-primary/20 hover:bg-muted/40"
                 )}
               >
                 <div className="flex items-center gap-3 mb-1.5">
@@ -244,7 +241,7 @@ export function Features() {
                       "flex size-8 shrink-0 items-center justify-center rounded-lg border transition-colors",
                       active === tab.id
                         ? "border-primary/30 bg-primary/15 text-primary"
-                        : "border-white/10 bg-white/5 text-muted-foreground group-hover:text-foreground"
+                        : "border-border bg-muted text-muted-foreground group-hover:text-foreground"
                     )}
                   >
                     <tab.icon className="size-4" />

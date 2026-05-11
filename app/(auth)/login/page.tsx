@@ -2,9 +2,9 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { login } from '@/lib/supabase/actions'
 
 interface FieldErrors {
   email?: string
@@ -21,7 +21,6 @@ function validatePassword(value: string) {
 }
 
 export default function LoginPage() {
-  const router = useRouter()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [errors, setErrors] = useState<FieldErrors>({})
@@ -44,10 +43,15 @@ export default function LoginPage() {
     if (!validate()) return
 
     setLoading(true)
-    // Fake auth — substitui pelo Supabase no Milestone 06
-    await new Promise((res) => setTimeout(res, 1200))
+    const result = await login(email, password)
     setLoading(false)
-    router.push('/dashboard')
+    if (result?.error) {
+      setGlobalError(
+        result.error.includes('Invalid login credentials')
+          ? 'E-mail ou senha incorretos.'
+          : result.error,
+      )
+    }
   }
 
   return (
