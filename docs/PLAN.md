@@ -147,17 +147,17 @@
 - [x] Criar `/app/(auth)/login/page.tsx` — formulário de login (e-mail + senha)
 - [x] Criar `/app/(auth)/signup/page.tsx` — formulário de cadastro
 - [x] Criar `/app/(auth)/layout.tsx` — layout público de auth (centralizado, sem sidebar)
-- [ ] Criar `lib/supabase/actions.ts` — Server Actions para login, signup, logout
-- [ ] Middleware `middleware.ts` — redirecionar rotas protegidas para `/login` se não autenticado
+- [x] Criar `lib/supabase/actions.ts` — Server Actions para login, signup, logout
+- [x] `proxy.ts` — redirecionar rotas protegidas para `/login` se não autenticado (Next.js 16: `middleware.ts` → `proxy.ts`)
 - [x] Redirecionar para `/dashboard` após login bem-sucedido
-- [ ] Logout no dropdown de perfil da topbar
+- [x] Logout no dropdown de perfil da topbar
 - [x] Página `/app/(auth)/forgot-password` — solicitar reset de senha
-- [ ] Callback de auth: `/app/auth/callback/route.ts`
-- [ ] Proteger todas as rotas `(app)` com middleware
+- [x] Callback de auth: `/app/auth/callback/route.ts`
+- [x] Proteger todas as rotas `(app)` com proxy.ts
 
-> UI concluída (aula 2.2). Integração Supabase pendente para fase de backend.
+> Concluído. Auth real Supabase completo. Fixes: Script anti-FOUC (React 19), createServiceClient com `@supabase/supabase-js` puro para bypass correto de RLS.
 
-**Commit final:** `feat: autenticação completa com Supabase Auth, middleware e proteção de rotas`
+**Commit final:** `feat: auth real Supabase, onboarding, dashboard/pipeline UI e correções Next.js 16` ✅
 
 ---
 
@@ -170,8 +170,8 @@
 - [x] RLS policies para `workspaces`, `workspace_members`, `workspace_invites`
 - [x] Onboarding flow: após cadastro, redirecionar para `/create-workspace`
 - [x] Página `/app/(onboarding)/create-workspace` — formulário de criação do primeiro workspace
-- [ ] Salvar `workspace_id` ativo no cookie/session
-- [ ] `WorkspaceSwitcher` funcional — listar workspaces do usuário e alternar
+- [x] Salvar `workspace_id` ativo no cookie/session
+- [x] `WorkspaceSwitcher` funcional — listar workspaces do usuário e alternar
 - [ ] Página `/app/(app)/settings/workspace` — configurações do workspace (nome, logo)
 - [ ] Página `/app/(app)/settings/members` — listar membros e papéis
 - [ ] Modal `InviteMember` — convidar por e-mail (gera token de convite)
