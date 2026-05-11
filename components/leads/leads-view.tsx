@@ -1,10 +1,9 @@
 "use client"
 
-import { useState, useMemo } from "react"
-import Link from "next/link"
+import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
+import Link from "next/link"
 import { Lead, LeadStatus } from "@/types/lead"
-import { mockOwners } from "@/lib/mock/leads"
 import { LeadStatusBadge } from "@/components/leads/lead-status-badge"
 import { LeadForm } from "@/components/leads/lead-form"
 import { Button } from "@/components/ui/button"
@@ -24,6 +23,7 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog"
 import { Plus, Search, MoreHorizontal, ExternalLink, Pencil, Trash2 } from "lucide-react"
+import { createLeadAction, updateLeadAction, deleteLeadAction } from "@/app/(app)/leads/actions"
 
 const STATUS_OPTIONS: { value: LeadStatus | "all"; label: string }[] = [
   { value: "all", label: "Todos os status" },
@@ -53,31 +53,38 @@ function formatDate(dateStr: string) {
 }
 
 interface LeadsViewProps {
-  initialLeads: Lead[]
+  leads: Lead[]
+  currentSearch: string
+  currentStatus: string
 }
 
-export function LeadsView({ initialLeads }: LeadsViewProps) {
+export function LeadsView({ leads, currentSearch, currentStatus }: LeadsViewProps) {
   const router = useRouter()
-  const [leads, setLeads] = useState<Lead[]>(initialLeads)
-  const [search, setSearch] = useState("")
-  const [statusFilter, setStatusFilter] = useState<LeadStatus | "all">("all")
-  const [ownerFilter, setOwnerFilter] = useState<string>("all")
+  const [search, setSearch] = useState(currentSearch)
+  const [statusFilter, setStatusFilter] = useState(currentStatus)
   const [formOpen, setFormOpen] = useState(false)
   const [selectedLead, setSelectedLead] = useState<Lead | null>(null)
   const [deleteTarget, setDeleteTarget] = useState<Lead | null>(null)
+  const [isPending, setIsPending] = useState(false)
 
-  const filtered = useMemo(() => {
-    return leads.filter((lead) => {
-      const q = search.toLowerCase()
-      const matchSearch =
-        !q ||
-        lead.name.toLowerCase().includes(q) ||
-        lead.company.toLowerCase().includes(q)
-      const matchStatus = statusFilter === "all" || lead.status === statusFilter
-      const matchOwner = ownerFilter === "all" || lead.owner === ownerFilter
-      return matchSearch && matchStatus && matchOwner
-    })
-  }, [leads, search, statusFilter, ownerFilter])
+  // Debounced search → URL update
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      const params = new URLSearchParams()
+      if (search) params.set("q", search)
+      if (statusFilter !== "all") params.set("status", statusFilter)
+      router.push(`/leads?${params.toString()}`)
+    }, 400)
+    return () => clearTimeout(timer)
+  }, [search]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  function handleStatusChange(value: string) {
+    setStatusFilter(value)
+    const params = new URLSearchParams()
+    if (search) params.set("q", search)
+    if (value !== "all") params.set("status", value)
+    router.push(`/leads?${params.toString()}`)
+  }
 
   function openCreate() {
     setSelectedLead(null)
@@ -89,21 +96,46 @@ export function LeadsView({ initialLeads }: LeadsViewProps) {
     setFormOpen(true)
   }
 
-  function handleSave(saved: Lead) {
-    setLeads((prev) => {
-      const exists = prev.find((l) => l.id === saved.id)
-      if (exists) return prev.map((l) => (l.id === saved.id ? saved : l))
-      return [saved, ...prev]
-    })
+  async function handleSave(saved: Lead) {
+    setFormOpen(false)
+    setIsPending(true)
+    try {
+      if (selectedLead) {
+        await updateLeadAction(saved.id, {
+          name: saved.name,
+          email: saved.email,
+          phone: saved.phone,
+          company: saved.company,
+          role: saved.role,
+          status: saved.status,
+        })
+      } else {
+        await createLeadAction({
+          name: saved.name,
+          email: saved.email,
+          phone: saved.phone,
+          company: saved.company,
+          role: saved.role,
+          status: saved.status,
+        })
+      }
+      router.refresh()
+    } finally {
+      setIsPending(false)
+    }
   }
 
-  function handleDelete(id: string) {
-    setLeads((prev) => prev.filter((l) => l.id !== id))
+  async function confirmDelete() {
+    if (!deleteTarget) return
+    const target = deleteTarget
     setDeleteTarget(null)
-  }
-
-  function confirmDelete() {
-    if (deleteTarget) handleDelete(deleteTarget.id)
+    setIsPending(true)
+    try {
+      await deleteLeadAction(target.id)
+      router.refresh()
+    } finally {
+      setIsPending(false)
+    }
   }
 
   const selectClass =
@@ -116,10 +148,10 @@ export function LeadsView({ initialLeads }: LeadsViewProps) {
         <div>
           <h1 className="text-2xl font-bold tracking-tight">Leads</h1>
           <p className="mt-1 text-sm text-muted-foreground">
-            {leads.length} leads cadastrados
+            {leads.length} {leads.length === 1 ? "lead encontrado" : "leads encontrados"}
           </p>
         </div>
-        <Button onClick={openCreate}>
+        <Button onClick={openCreate} disabled={isPending}>
           <Plus className="h-4 w-4" />
           Novo Lead
         </Button>
@@ -138,24 +170,12 @@ export function LeadsView({ initialLeads }: LeadsViewProps) {
         </div>
         <select
           value={statusFilter}
-          onChange={(e) => setStatusFilter(e.target.value as LeadStatus | "all")}
+          onChange={(e) => handleStatusChange(e.target.value)}
           className={selectClass}
         >
           {STATUS_OPTIONS.map((opt) => (
             <option key={opt.value} value={opt.value}>
               {opt.label}
-            </option>
-          ))}
-        </select>
-        <select
-          value={ownerFilter}
-          onChange={(e) => setOwnerFilter(e.target.value)}
-          className={selectClass}
-        >
-          <option value="all">Todos os responsáveis</option>
-          {mockOwners.map((owner) => (
-            <option key={owner} value={owner}>
-              {owner}
             </option>
           ))}
         </select>
@@ -167,21 +187,14 @@ export function LeadsView({ initialLeads }: LeadsViewProps) {
           <table className="w-full text-sm">
             <thead>
               <tr className="border-b border-border bg-muted/40">
-                <th className="px-4 py-3 text-left font-medium text-muted-foreground">
-                  Lead
-                </th>
+                <th className="px-4 py-3 text-left font-medium text-muted-foreground">Lead</th>
                 <th className="px-4 py-3 text-left font-medium text-muted-foreground hidden md:table-cell">
                   Empresa
                 </th>
                 <th className="px-4 py-3 text-left font-medium text-muted-foreground hidden lg:table-cell">
                   Cargo
                 </th>
-                <th className="px-4 py-3 text-left font-medium text-muted-foreground">
-                  Status
-                </th>
-                <th className="px-4 py-3 text-left font-medium text-muted-foreground hidden md:table-cell">
-                  Responsável
-                </th>
+                <th className="px-4 py-3 text-left font-medium text-muted-foreground">Status</th>
                 <th className="px-4 py-3 text-left font-medium text-muted-foreground hidden lg:table-cell">
                   Criado em
                 </th>
@@ -189,19 +202,15 @@ export function LeadsView({ initialLeads }: LeadsViewProps) {
               </tr>
             </thead>
             <tbody className="divide-y divide-border">
-              {filtered.length === 0 ? (
+              {leads.length === 0 ? (
                 <tr>
-                  <td colSpan={7} className="px-4 py-12 text-center text-muted-foreground">
+                  <td colSpan={6} className="px-4 py-12 text-center text-muted-foreground">
                     Nenhum lead encontrado.
                   </td>
                 </tr>
               ) : (
-                filtered.map((lead) => (
-                  <tr
-                    key={lead.id}
-                    className="bg-card hover:bg-muted/30 transition-colors"
-                  >
-                    {/* Lead */}
+                leads.map((lead) => (
+                  <tr key={lead.id} className="bg-card hover:bg-muted/30 transition-colors">
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-3">
                         <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary text-xs font-semibold">
@@ -220,33 +229,18 @@ export function LeadsView({ initialLeads }: LeadsViewProps) {
                         </div>
                       </div>
                     </td>
-
-                    {/* Empresa */}
                     <td className="px-4 py-3 text-muted-foreground hidden md:table-cell">
                       {lead.company}
                     </td>
-
-                    {/* Cargo */}
                     <td className="px-4 py-3 text-muted-foreground hidden lg:table-cell">
                       {lead.role}
                     </td>
-
-                    {/* Status */}
                     <td className="px-4 py-3">
                       <LeadStatusBadge status={lead.status} />
                     </td>
-
-                    {/* Responsável */}
-                    <td className="px-4 py-3 text-muted-foreground hidden md:table-cell">
-                      {lead.owner}
-                    </td>
-
-                    {/* Data */}
                     <td className="px-4 py-3 text-muted-foreground hidden lg:table-cell">
                       {formatDate(lead.createdAt)}
                     </td>
-
-                    {/* Ações */}
                     <td className="px-4 py-3">
                       <DropdownMenu>
                         <DropdownMenuTrigger
@@ -284,10 +278,9 @@ export function LeadsView({ initialLeads }: LeadsViewProps) {
           </table>
         </div>
 
-        {/* Rodapé da tabela */}
-        {filtered.length > 0 && (
+        {leads.length > 0 && (
           <div className="border-t border-border bg-muted/20 px-4 py-2 text-xs text-muted-foreground">
-            Exibindo {filtered.length} de {leads.length} leads
+            {leads.length} {leads.length === 1 ? "lead" : "leads"}
           </div>
         )}
       </div>
@@ -298,13 +291,14 @@ export function LeadsView({ initialLeads }: LeadsViewProps) {
         onOpenChange={setFormOpen}
         lead={selectedLead}
         onSave={handleSave}
-        onDelete={handleDelete}
       />
 
       {/* Delete confirmation */}
       <Dialog
         open={!!deleteTarget}
-        onOpenChange={(open) => { if (!open) setDeleteTarget(null) }}
+        onOpenChange={(open) => {
+          if (!open) setDeleteTarget(null)
+        }}
       >
         <DialogContent className="sm:max-w-sm">
           <DialogHeader>
@@ -312,14 +306,14 @@ export function LeadsView({ initialLeads }: LeadsViewProps) {
           </DialogHeader>
           <p className="text-sm text-muted-foreground">
             Tem certeza que deseja excluir{" "}
-            <span className="font-medium text-foreground">{deleteTarget?.name}</span>?
-            Esta ação não pode ser desfeita.
+            <span className="font-medium text-foreground">{deleteTarget?.name}</span>? Esta ação
+            não pode ser desfeita.
           </p>
           <DialogFooter>
             <Button variant="outline" onClick={() => setDeleteTarget(null)}>
               Cancelar
             </Button>
-            <Button variant="destructive" onClick={confirmDelete}>
+            <Button variant="destructive" onClick={confirmDelete} disabled={isPending}>
               Excluir
             </Button>
           </DialogFooter>
