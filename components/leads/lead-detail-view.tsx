@@ -1,25 +1,17 @@
 "use client"
 
 import { useState } from "react"
+import { useRouter } from "next/navigation"
 import Link from "next/link"
-import { Lead, Activity } from "@/types/lead"
+import { Lead } from "@/types/lead"
 import { LeadStatusBadge } from "@/components/leads/lead-status-badge"
 import { LeadForm } from "@/components/leads/lead-form"
 import { ActivityTimeline } from "@/components/leads/activity-timeline"
 import { AddActivityModal } from "@/components/leads/add-activity-modal"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import {
-  ArrowLeft,
-  Pencil,
-  Plus,
-  Mail,
-  Phone,
-  Building2,
-  Briefcase,
-  Calendar,
-  User,
-} from "lucide-react"
+import { ArrowLeft, Pencil, Plus, Mail, Phone, Building2, Briefcase, Calendar } from "lucide-react"
+import { updateLeadAction } from "@/app/(app)/leads/actions"
 
 function formatDate(dateStr: string) {
   return new Date(dateStr + "T12:00:00").toLocaleDateString("pt-BR", {
@@ -53,25 +45,28 @@ interface LeadDetailViewProps {
   lead: Lead
 }
 
-export function LeadDetailView({ lead: initialLead }: LeadDetailViewProps) {
-  const [lead, setLead] = useState<Lead>(initialLead)
+export function LeadDetailView({ lead }: LeadDetailViewProps) {
+  const router = useRouter()
   const [editOpen, setEditOpen] = useState(false)
   const [addActivityOpen, setAddActivityOpen] = useState(false)
 
-  function handleSave(updated: Lead) {
-    setLead(updated)
-  }
-
-  function handleAddActivity(activity: Activity) {
-    setLead((prev) => ({
-      ...prev,
-      activities: [activity, ...prev.activities],
-    }))
+  async function handleSave(updated: Lead) {
+    setEditOpen(false)
+    await updateLeadAction(lead.id, {
+      name: updated.name,
+      email: updated.email,
+      phone: updated.phone,
+      company: updated.company,
+      role: updated.role,
+      status: updated.status,
+      notes: updated.notes,
+      estimatedValue: updated.estimatedValue,
+    })
+    router.refresh()
   }
 
   return (
     <div className="space-y-6">
-      {/* Back link */}
       <Link
         href="/leads"
         className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors"
@@ -80,7 +75,6 @@ export function LeadDetailView({ lead: initialLead }: LeadDetailViewProps) {
         Voltar para Leads
       </Link>
 
-      {/* Header */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
         <div className="flex items-center gap-4">
           <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary text-lg font-semibold">
@@ -108,11 +102,8 @@ export function LeadDetailView({ lead: initialLead }: LeadDetailViewProps) {
         </Button>
       </div>
 
-      {/* Content grid */}
       <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
-        {/* Left: Info cards */}
         <div className="space-y-4 lg:col-span-1">
-          {/* Contato */}
           <Card>
             <CardHeader>
               <CardTitle className="text-sm">Informações de Contato</CardTitle>
@@ -123,7 +114,6 @@ export function LeadDetailView({ lead: initialLead }: LeadDetailViewProps) {
             </CardContent>
           </Card>
 
-          {/* Empresa */}
           <Card>
             <CardHeader>
               <CardTitle className="text-sm">Empresa</CardTitle>
@@ -134,23 +124,16 @@ export function LeadDetailView({ lead: initialLead }: LeadDetailViewProps) {
             </CardContent>
           </Card>
 
-          {/* Meta */}
           <Card>
             <CardHeader>
               <CardTitle className="text-sm">Detalhes</CardTitle>
             </CardHeader>
             <CardContent className="space-y-3">
-              <InfoRow icon={User} label="Responsável" value={lead.owner} />
-              <InfoRow
-                icon={Calendar}
-                label="Criado em"
-                value={formatDate(lead.createdAt)}
-              />
+              <InfoRow icon={Calendar} label="Criado em" value={formatDate(lead.createdAt)} />
             </CardContent>
           </Card>
         </div>
 
-        {/* Right: Timeline */}
         <div className="lg:col-span-2">
           <Card>
             <CardHeader>
@@ -175,20 +158,12 @@ export function LeadDetailView({ lead: initialLead }: LeadDetailViewProps) {
         </div>
       </div>
 
-      {/* Edit Sheet */}
-      <LeadForm
-        open={editOpen}
-        onOpenChange={setEditOpen}
-        lead={lead}
-        onSave={handleSave}
-      />
+      <LeadForm open={editOpen} onOpenChange={setEditOpen} lead={lead} ownerDisplay={lead.owner} onSave={handleSave} />
 
-      {/* Add Activity Modal */}
       <AddActivityModal
         open={addActivityOpen}
         onOpenChange={setAddActivityOpen}
         leadId={lead.id}
-        onAdd={handleAddActivity}
       />
     </div>
   )

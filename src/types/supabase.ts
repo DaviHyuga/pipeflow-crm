@@ -100,6 +100,7 @@ export type LeadRow = {
   status: LeadStatus
   owner_id: string | null
   notes: string | null
+  estimated_value: number | null
   created_at: string
   updated_at: string
 }
@@ -112,6 +113,7 @@ export type ActivityRow = {
   type: ActivityType
   title: string
   description: string | null
+  scheduled_date: string | null
   created_at: string
 }
 
@@ -230,8 +232,8 @@ export type Database = {
       }
       workspace_invites: {
         Row: WorkspaceInviteRow
-        Insert: Omit<WorkspaceInviteRow, 'id' | 'created_at' | 'token'> &
-          Partial<Pick<WorkspaceInviteRow, 'id' | 'created_at' | 'token'>>
+        Insert: Omit<WorkspaceInviteRow, 'id' | 'created_at' | 'token' | 'accepted_at' | 'expires_at'> &
+          Partial<Pick<WorkspaceInviteRow, 'id' | 'created_at' | 'token' | 'accepted_at' | 'expires_at'>>
         Update: Partial<Omit<WorkspaceInviteRow, 'id'>>
         Relationships: []
       }

@@ -1,28 +1,33 @@
-import { mockMetrics, mockFunnelData, mockUpcomingDeals } from "@/lib/mock/dashboard"
-import { MetricCard } from "@/components/dashboard/metric-card"
-import { SalesFunnel } from "@/components/dashboard/sales-funnel"
-import { UpcomingDeals } from "@/components/dashboard/upcoming-deals"
+import { cookies } from 'next/headers'
+import { redirect } from 'next/navigation'
+import { WORKSPACE_COOKIE } from '@/lib/workspaces'
+import { getDashboardData } from '@/lib/metrics'
+import { MetricCard } from '@/components/dashboard/metric-card'
+import { SalesFunnel } from '@/components/dashboard/sales-funnel'
+import { UpcomingDeals } from '@/components/dashboard/upcoming-deals'
 
-export default function DashboardPage() {
+export default async function DashboardPage() {
+  const cookieStore = await cookies()
+  const workspaceId = cookieStore.get(WORKSPACE_COOKIE)?.value
+  if (!workspaceId) redirect('/create-workspace')
+
+  const { metrics, funnelData, upcomingDeals } = await getDashboardData(workspaceId)
+
   return (
     <div className="space-y-6">
-      {/* Header */}
       <div>
         <h1 className="text-2xl font-bold tracking-tight">Dashboard</h1>
       </div>
 
-      {/* Metric cards — 2 cols mobile, 4 cols desktop */}
       <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
-        {mockMetrics.map((metric) => (
+        {metrics.map((metric) => (
           <MetricCard key={metric.label} metric={metric} />
         ))}
       </div>
 
-      {/* Bar chart — full width */}
-      <SalesFunnel data={mockFunnelData} />
+      <SalesFunnel data={funnelData} />
 
-      {/* Upcoming deals table — full width */}
-      <UpcomingDeals deals={mockUpcomingDeals} />
+      <UpcomingDeals deals={upcomingDeals} />
     </div>
   )
 }

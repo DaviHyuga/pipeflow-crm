@@ -87,10 +87,18 @@ export function ActivityTimeline({ activities }: ActivityTimelineProps) {
               <p className="text-sm text-muted-foreground leading-relaxed">
                 {activity.description}
               </p>
-              <div className="mt-1.5 flex items-center gap-2 text-xs text-muted-foreground">
+              <div className="mt-1.5 flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
                 <span>{activity.author}</span>
                 <span>·</span>
-                <span>{formatDate(activity.date)}</span>
+                <span>Registrado em {formatDate(activity.date)}</span>
+                {activity.scheduledDate && (
+                  <>
+                    <span>·</span>
+                    <span className="text-primary font-medium">
+                      Previsto para {formatDate(activity.scheduledDate)}
+                    </span>
+                  </>
+                )}
               </div>
             </div>
           </div>

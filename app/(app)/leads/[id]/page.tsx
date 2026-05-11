@@ -1,22 +1,22 @@
-import { notFound } from "next/navigation"
-import { mockLeads } from "@/lib/mock/leads"
-import { LeadDetailView } from "@/components/leads/lead-detail-view"
+import { notFound, redirect } from 'next/navigation'
+import { cookies } from 'next/headers'
+import { WORKSPACE_COOKIE } from '@/lib/workspaces'
+import { getLead } from '@/lib/leads'
+import { LeadDetailView } from '@/components/leads/lead-detail-view'
 
 interface LeadPageProps {
   params: Promise<{ id: string }>
 }
 
 export default async function LeadPage({ params }: LeadPageProps) {
-  const { id } = await params
-  const lead = mockLeads.find((l) => l.id === id)
+  const cookieStore = await cookies()
+  const workspaceId = cookieStore.get(WORKSPACE_COOKIE)?.value
+  if (!workspaceId) redirect('/create-workspace')
 
-  if (!lead) {
-    notFound()
-  }
+  const { id } = await params
+  const lead = await getLead(workspaceId, id)
+
+  if (!lead) notFound()
 
   return <LeadDetailView lead={lead} />
-}
-
-export function generateStaticParams() {
-  return mockLeads.map((lead) => ({ id: lead.id }))
 }

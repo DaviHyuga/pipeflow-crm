@@ -1,7 +1,8 @@
 "use client"
 
-import { useState } from "react"
-import { Activity, ActivityType } from "@/types/lead"
+import { useState, useTransition } from "react"
+import { useRouter } from "next/navigation"
+import { ActivityType } from "@/types/lead"
 import {
   Dialog,
   DialogContent,
@@ -13,6 +14,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Phone, Mail, Video, FileText } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { createActivityAction } from "@/app/(app)/leads/actions"
 
 const activityTypes: { value: ActivityType; label: string; icon: React.ElementType }[] = [
   { value: "ligacao", label: "Ligação", icon: Phone },
@@ -25,44 +27,35 @@ interface AddActivityModalProps {
   open: boolean
   onOpenChange: (open: boolean) => void
   leadId: string
-  onAdd: (activity: Activity) => void
 }
 
-export function AddActivityModal({
-  open,
-  onOpenChange,
-  leadId,
-  onAdd,
-}: AddActivityModalProps) {
+export function AddActivityModal({ open, onOpenChange, leadId }: AddActivityModalProps) {
+  const router = useRouter()
+  const [isPending, startTransition] = useTransition()
   const [type, setType] = useState<ActivityType>("ligacao")
   const [title, setTitle] = useState("")
   const [description, setDescription] = useState("")
-  const [date, setDate] = useState(new Date().toISOString().split("T")[0])
+  const [scheduledDate, setScheduledDate] = useState(new Date().toISOString().split("T")[0])
 
   function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
     if (!title.trim()) return
 
-    const activity: Activity = {
-      id: `act-${Date.now()}`,
-      leadId,
-      type,
-      title: title.trim(),
-      description: description.trim(),
-      date,
-      author: "Rafael Torres",
-    }
-
-    onAdd(activity)
-    resetForm()
-    onOpenChange(false)
-  }
-
-  function resetForm() {
-    setType("ligacao")
-    setTitle("")
-    setDescription("")
-    setDate(new Date().toISOString().split("T")[0])
+    startTransition(async () => {
+      await createActivityAction({
+        leadId,
+        type,
+        title: title.trim(),
+        description: description.trim(),
+        scheduledDate,
+      })
+      setType("ligacao")
+      setTitle("")
+      setDescription("")
+      setScheduledDate(new Date().toISOString().split("T")[0])
+      onOpenChange(false)
+      router.refresh()
+    })
   }
 
   return (
@@ -73,7 +66,6 @@ export function AddActivityModal({
         </DialogHeader>
 
         <form onSubmit={handleSubmit} className="space-y-4">
-          {/* Tipo */}
           <div>
             <label className="block text-sm font-medium mb-2">Tipo</label>
             <div className="grid grid-cols-4 gap-2">
@@ -86,7 +78,7 @@ export function AddActivityModal({
                     "flex flex-col items-center gap-1.5 rounded-lg border p-2.5 text-xs font-medium transition-colors",
                     type === value
                       ? "border-ring bg-primary/10 text-primary"
-                      : "border-border hover:bg-muted"
+                      : "border-border hover:bg-muted",
                   )}
                 >
                   <Icon className="h-4 w-4" />
@@ -96,21 +88,33 @@ export function AddActivityModal({
             </div>
           </div>
 
-          {/* Título */}
-          <div>
-            <label htmlFor="act-title" className="block text-sm font-medium mb-1.5">
-              Título
-            </label>
-            <Input
-              id="act-title"
-              placeholder="Ex: Ligação de acompanhamento"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              required
-            />
+          <div className="grid grid-cols-2 gap-3">
+            <div className="col-span-2 sm:col-span-1">
+              <label htmlFor="act-title" className="block text-sm font-medium mb-1.5">
+                Título <span className="text-destructive">*</span>
+              </label>
+              <Input
+                id="act-title"
+                placeholder="Ex: Ligação de acompanhamento"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                required
+              />
+            </div>
+            <div className="col-span-2 sm:col-span-1">
+              <label htmlFor="act-date" className="block text-sm font-medium mb-1.5">
+                Data prevista
+              </label>
+              <input
+                id="act-date"
+                type="date"
+                value={scheduledDate}
+                onChange={(e) => setScheduledDate(e.target.value)}
+                className="w-full rounded-lg border border-input bg-background px-3 py-2 text-sm text-foreground focus:outline-none focus:border-ring transition-colors"
+              />
+            </div>
           </div>
 
-          {/* Descrição */}
           <div>
             <label htmlFor="act-desc" className="block text-sm font-medium mb-1.5">
               Descrição
@@ -125,28 +129,13 @@ export function AddActivityModal({
             />
           </div>
 
-          {/* Data */}
-          <div>
-            <label htmlFor="act-date" className="block text-sm font-medium mb-1.5">
-              Data
-            </label>
-            <Input
-              id="act-date"
-              type="date"
-              value={date}
-              onChange={(e) => setDate(e.target.value)}
-            />
-          </div>
-
           <DialogFooter>
-            <Button
-              type="button"
-              variant="outline"
-              onClick={() => onOpenChange(false)}
-            >
+            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
               Cancelar
             </Button>
-            <Button type="submit">Registrar</Button>
+            <Button type="submit" disabled={isPending}>
+              {isPending ? "Registrando..." : "Registrar"}
+            </Button>
           </DialogFooter>
         </form>
       </DialogContent>

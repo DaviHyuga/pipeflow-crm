@@ -3,13 +3,6 @@
 import { useState, useEffect } from "react"
 import { Lead, LeadStatus } from "@/types/lead"
 import {
-  Sheet,
-  SheetContent,
-  SheetHeader,
-  SheetTitle,
-  SheetFooter,
-} from "@/components/ui/sheet"
-import {
   Dialog,
   DialogContent,
   DialogHeader,
@@ -18,7 +11,6 @@ import {
 } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { mockOwners } from "@/lib/mock/leads"
 
 const statusOptions: { value: LeadStatus; label: string }[] = [
   { value: "novo", label: "Novo" },
@@ -29,12 +21,29 @@ const statusOptions: { value: LeadStatus; label: string }[] = [
   { value: "perdido", label: "Perdido" },
 ]
 
+const fieldClass =
+  "w-full rounded-lg border border-input bg-background px-3 py-2 text-sm text-foreground " +
+  "focus:outline-none focus:border-ring transition-colors placeholder:text-muted-foreground " +
+  "disabled:opacity-60 disabled:cursor-default"
+
+const labelClass = "block text-xs font-medium text-muted-foreground mb-1.5"
+
+function formatValueInput(raw: string): string {
+  const digits = raw.replace(/\D/g, "")
+  if (!digits) return ""
+  return parseInt(digits, 10).toLocaleString("pt-BR")
+}
+
+function parseValueInput(formatted: string): number {
+  return parseInt(formatted.replace(/\D/g, "") || "0", 10)
+}
+
 interface LeadFormProps {
   open: boolean
   onOpenChange: (open: boolean) => void
   lead?: Lead | null
+  ownerDisplay: string
   onSave: (lead: Lead) => void
-  onDelete?: (id: string) => void
 }
 
 type FormState = {
@@ -44,31 +53,26 @@ type FormState = {
   company: string
   role: string
   status: LeadStatus
-  owner: string
+  notes: string
+  estimatedValueRaw: string
 }
 
-const emptyForm: FormState = {
-  name: "",
-  email: "",
-  phone: "",
-  company: "",
-  role: "",
-  status: "novo",
-  owner: mockOwners[0],
-}
-
-export function LeadForm({
-  open,
-  onOpenChange,
-  lead,
-  onSave,
-  onDelete,
-}: LeadFormProps) {
-  const [form, setForm] = useState<FormState>(emptyForm)
-  const [deleteOpen, setDeleteOpen] = useState(false)
+export function LeadForm({ open, onOpenChange, lead, ownerDisplay, onSave }: LeadFormProps) {
   const isEditing = !!lead
 
+  const [form, setForm] = useState<FormState>({
+    name: "",
+    email: "",
+    phone: "",
+    company: "",
+    role: "",
+    status: "novo",
+    notes: "",
+    estimatedValueRaw: "",
+  })
+
   useEffect(() => {
+    if (!open) return
     if (lead) {
       setForm({
         name: lead.name,
@@ -77,14 +81,25 @@ export function LeadForm({
         company: lead.company,
         role: lead.role,
         status: lead.status,
-        owner: lead.owner,
+        notes: lead.notes,
+        estimatedValueRaw:
+          lead.estimatedValue > 0 ? lead.estimatedValue.toLocaleString("pt-BR") : "",
       })
     } else {
-      setForm(emptyForm)
+      setForm({
+        name: "",
+        email: "",
+        phone: "",
+        company: "",
+        role: "",
+        status: "novo",
+        notes: "",
+        estimatedValueRaw: "",
+      })
     }
-  }, [lead, open])
+  }, [open, lead])
 
-  function set(field: keyof FormState, value: string) {
+  function set<K extends keyof FormState>(field: K, value: FormState[K]) {
     setForm((prev) => ({ ...prev, [field]: value }))
   }
 
@@ -92,189 +107,164 @@ export function LeadForm({
     e.preventDefault()
     const saved: Lead = {
       id: lead?.id ?? `lead-${Date.now()}`,
-      ...form,
+      name: form.name.trim(),
+      email: form.email,
+      phone: form.phone,
+      company: form.company,
+      role: form.role,
+      status: form.status,
+      owner: lead?.owner ?? ownerDisplay,
+      notes: form.notes,
+      estimatedValue: parseValueInput(form.estimatedValueRaw),
       createdAt: lead?.createdAt ?? new Date().toISOString().split("T")[0],
       activities: lead?.activities ?? [],
     }
     onSave(saved)
-    onOpenChange(false)
   }
-
-  function handleDeleteConfirm() {
-    if (lead && onDelete) {
-      onDelete(lead.id)
-      setDeleteOpen(false)
-      onOpenChange(false)
-    }
-  }
-
-  const selectClass =
-    "h-8 w-full rounded-lg border border-input bg-transparent px-2.5 py-1 text-sm outline-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 dark:bg-input/30"
 
   return (
-    <>
-      <Sheet open={open} onOpenChange={onOpenChange}>
-        <SheetContent side="right" className="sm:max-w-md w-full flex flex-col overflow-y-auto">
-          <SheetHeader>
-            <SheetTitle>{isEditing ? "Editar Lead" : "Novo Lead"}</SheetTitle>
-          </SheetHeader>
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="sm:max-w-lg">
+        <DialogHeader>
+          <DialogTitle>{isEditing ? "Editar Lead" : "Novo Lead"}</DialogTitle>
+        </DialogHeader>
 
-          <form onSubmit={handleSubmit} className="flex-1 flex flex-col gap-4 px-4 py-2">
-            <div className="grid grid-cols-1 gap-4">
-              {/* Nome */}
-              <div>
-                <label htmlFor="lead-name" className="block text-sm font-medium mb-1.5">
-                  Nome <span className="text-destructive">*</span>
-                </label>
-                <Input
-                  id="lead-name"
-                  placeholder="Nome completo"
-                  value={form.name}
-                  onChange={(e) => set("name", e.target.value)}
-                  required
+        <form onSubmit={handleSubmit} className="space-y-4 py-1">
+          {/* Nome + E-mail */}
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className={labelClass}>
+                Nome <span className="text-destructive">*</span>
+              </label>
+              <Input
+                value={form.name}
+                onChange={(e) => set("name", e.target.value)}
+                placeholder="Nome completo"
+                required
+              />
+            </div>
+            <div>
+              <label className={labelClass}>
+                E-mail <span className="text-destructive">*</span>
+              </label>
+              <Input
+                type="email"
+                value={form.email}
+                onChange={(e) => set("email", e.target.value)}
+                placeholder="email@empresa.com"
+              />
+            </div>
+          </div>
+
+          {/* Empresa + Telefone */}
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className={labelClass}>Empresa</label>
+              <Input
+                value={form.company}
+                onChange={(e) => set("company", e.target.value)}
+                placeholder="Nome da empresa"
+              />
+            </div>
+            <div>
+              <label className={labelClass}>Telefone</label>
+              <Input
+                type="tel"
+                value={form.phone}
+                onChange={(e) => set("phone", e.target.value)}
+                placeholder="(11) 99999-9999"
+              />
+            </div>
+          </div>
+
+          {/* Cargo + Status */}
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className={labelClass}>Cargo</label>
+              <input
+                type="text"
+                value={form.role}
+                onChange={(e) => set("role", e.target.value)}
+                placeholder="Ex: Diretor Comercial"
+                className={fieldClass}
+              />
+            </div>
+            <div>
+              <label className={labelClass}>
+                Status <span className="text-destructive">*</span>
+              </label>
+              <select
+                value={form.status}
+                onChange={(e) => set("status", e.target.value as LeadStatus)}
+                className={fieldClass}
+              >
+                {statusOptions.map((opt) => (
+                  <option key={opt.value} value={opt.value}>
+                    {opt.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          {/* Responsável + Valor estimado */}
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className={labelClass}>
+                Responsável <span className="text-destructive">*</span>
+              </label>
+              <input
+                type="text"
+                value={lead?.owner ?? ownerDisplay}
+                readOnly
+                disabled
+                className={fieldClass}
+              />
+            </div>
+            <div>
+              <label className={labelClass}>Valor estimado (R$)</label>
+              <div className="relative">
+                <span className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground pointer-events-none">
+                  R$
+                </span>
+                <input
+                  type="text"
+                  inputMode="numeric"
+                  value={form.estimatedValueRaw}
+                  onChange={(e) => set("estimatedValueRaw", formatValueInput(e.target.value))}
+                  placeholder="0"
+                  className={`${fieldClass} pl-8`}
                 />
-              </div>
-
-              {/* E-mail */}
-              <div>
-                <label htmlFor="lead-email" className="block text-sm font-medium mb-1.5">
-                  E-mail
-                </label>
-                <Input
-                  id="lead-email"
-                  type="email"
-                  placeholder="email@empresa.com"
-                  value={form.email}
-                  onChange={(e) => set("email", e.target.value)}
-                />
-              </div>
-
-              {/* Telefone */}
-              <div>
-                <label htmlFor="lead-phone" className="block text-sm font-medium mb-1.5">
-                  Telefone
-                </label>
-                <Input
-                  id="lead-phone"
-                  type="tel"
-                  placeholder="(11) 99999-9999"
-                  value={form.phone}
-                  onChange={(e) => set("phone", e.target.value)}
-                />
-              </div>
-
-              {/* Empresa */}
-              <div>
-                <label htmlFor="lead-company" className="block text-sm font-medium mb-1.5">
-                  Empresa
-                </label>
-                <Input
-                  id="lead-company"
-                  placeholder="Nome da empresa"
-                  value={form.company}
-                  onChange={(e) => set("company", e.target.value)}
-                />
-              </div>
-
-              {/* Cargo */}
-              <div>
-                <label htmlFor="lead-role" className="block text-sm font-medium mb-1.5">
-                  Cargo
-                </label>
-                <Input
-                  id="lead-role"
-                  placeholder="Ex: Diretor Comercial"
-                  value={form.role}
-                  onChange={(e) => set("role", e.target.value)}
-                />
-              </div>
-
-              {/* Status */}
-              <div>
-                <label htmlFor="lead-status" className="block text-sm font-medium mb-1.5">
-                  Status
-                </label>
-                <select
-                  id="lead-status"
-                  value={form.status}
-                  onChange={(e) => set("status", e.target.value as LeadStatus)}
-                  className={selectClass}
-                >
-                  {statusOptions.map((opt) => (
-                    <option key={opt.value} value={opt.value}>
-                      {opt.label}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              {/* Responsável */}
-              <div>
-                <label htmlFor="lead-owner" className="block text-sm font-medium mb-1.5">
-                  Responsável
-                </label>
-                <select
-                  id="lead-owner"
-                  value={form.owner}
-                  onChange={(e) => set("owner", e.target.value)}
-                  className={selectClass}
-                >
-                  {mockOwners.map((owner) => (
-                    <option key={owner} value={owner}>
-                      {owner}
-                    </option>
-                  ))}
-                </select>
               </div>
             </div>
+          </div>
 
-            <SheetFooter className="mt-auto">
-              {isEditing && onDelete && (
-                <Button
-                  type="button"
-                  variant="destructive"
-                  className="mr-auto"
-                  onClick={() => setDeleteOpen(true)}
-                >
-                  Excluir
-                </Button>
-              )}
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => onOpenChange(false)}
-              >
-                Cancelar
-              </Button>
-              <Button type="submit">
-                {isEditing ? "Salvar alterações" : "Criar lead"}
-              </Button>
-            </SheetFooter>
-          </form>
-        </SheetContent>
-      </Sheet>
+          {/* Notas */}
+          <div>
+            <label className={labelClass}>Notas</label>
+            <textarea
+              value={form.notes}
+              onChange={(e) => set("notes", e.target.value)}
+              placeholder="Observações sobre este lead..."
+              rows={3}
+              className={`${fieldClass} resize-none`}
+            />
+          </div>
 
-      {/* Confirm delete dialog */}
-      <Dialog open={deleteOpen} onOpenChange={setDeleteOpen}>
-        <DialogContent className="sm:max-w-sm">
-          <DialogHeader>
-            <DialogTitle>Excluir lead</DialogTitle>
-          </DialogHeader>
-          <p className="text-sm text-muted-foreground">
-            Tem certeza que deseja excluir{" "}
-            <span className="font-medium text-foreground">{lead?.name}</span>?
-            Esta ação não pode ser desfeita.
-          </p>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setDeleteOpen(false)}>
+          <DialogFooter className="pt-2">
+            <Button
+              type="button"
+              variant="ghost"
+              onClick={() => onOpenChange(false)}
+            >
               Cancelar
             </Button>
-            <Button variant="destructive" onClick={handleDeleteConfirm}>
-              Excluir
+            <Button type="submit" disabled={!form.name.trim()}>
+              {isEditing ? "Salvar alterações" : "Criar lead"}
             </Button>
           </DialogFooter>
-        </DialogContent>
-      </Dialog>
-    </>
+        </form>
+      </DialogContent>
+    </Dialog>
   )
 }

@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useRef } from "react"
 import {
   DndContext,
   DragEndEvent,
@@ -13,12 +13,28 @@ import {
 } from "@dnd-kit/core"
 import { arrayMove } from "@dnd-kit/sortable"
 import { STAGES, STAGE_IDS, StageId, Deal, KanbanBoard as KanbanBoardType } from "@/types/pipeline"
-import { mockBoard } from "@/lib/mock/pipeline"
 import { KanbanColumn } from "./kanban-column"
 import { DealCard } from "./deal-card"
 import { DealForm } from "./deal-form"
+import {
+  createDealAction,
+  updateDealAction,
+  updateDealStageAction,
+  deleteDealAction,
+} from "@/app/(app)/pipeline/actions"
 
-// ─── Helpers ───────────────────────────────────────────────────────────────────
+// ─── Helpers ────────────────────────────────────────────────────────────────
+
+function buildBoard(deals: Deal[]): KanbanBoardType {
+  const board = STAGE_IDS.reduce(
+    (acc, id) => ({ ...acc, [id]: [] }),
+    {} as KanbanBoardType,
+  )
+  for (const deal of deals) {
+    board[deal.stageId].push(deal)
+  }
+  return board
+}
 
 function findDealStage(boards: KanbanBoardType, dealId: string): StageId | null {
   for (const stageId of STAGE_IDS) {
@@ -35,26 +51,33 @@ function findDeal(boards: KanbanBoardType, dealId: string): Deal | null {
   return null
 }
 
-// ─── Component ─────────────────────────────────────────────────────────────────
+// ─── Component ──────────────────────────────────────────────────────────────
 
-export function KanbanBoard() {
-  const [boards, setBoards] = useState<KanbanBoardType>(mockBoard)
+interface KanbanBoardProps {
+  initialDeals: Deal[]
+  workspaceLeads: { id: string; name: string; company: string }[]
+}
+
+export function KanbanBoard({ initialDeals, workspaceLeads }: KanbanBoardProps) {
+  const [boards, setBoards] = useState<KanbanBoardType>(() => buildBoard(initialDeals))
   const [activeId, setActiveId] = useState<string | null>(null)
-
   const [formOpen, setFormOpen] = useState(false)
   const [editingDeal, setEditingDeal] = useState<Deal | null>(null)
   const [defaultStage, setDefaultStage] = useState<StageId>("novo_lead")
 
+  // Always-current ref to avoid stale closures in drag handlers
+  const latestBoards = useRef(boards)
+  latestBoards.current = boards
+
   const sensors = useSensors(
-    useSensor(PointerSensor, { activationConstraint: { distance: 8 } })
+    useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
   )
 
   const activeDeal = activeId ? findDeal(boards, activeId) : null
   const activeStageId = activeId ? findDealStage(boards, activeId) : null
-  const activeStageColor =
-    STAGES.find((s) => s.id === activeStageId)?.color ?? "#5B7FFF"
+  const activeStageColor = STAGES.find((s) => s.id === activeStageId)?.color ?? "#5B7FFF"
 
-  // ── Drag handlers ────────────────────────────────────────────────────────────
+  // ── Drag handlers ──────────────────────────────────────────────────────────
 
   function onDragStart({ active }: DragStartEvent) {
     setActiveId(active.id as string)
@@ -65,7 +88,6 @@ export function KanbanBoard() {
 
     const activeId = active.id as string
     const overId = over.id as string
-
     if (activeId === overId) return
 
     const isOverColumn = (STAGE_IDS as string[]).includes(overId)
@@ -77,39 +99,26 @@ export function KanbanBoard() {
       const targetStage: StageId = isOverColumn
         ? (overId as StageId)
         : (findDealStage(prev, overId) as StageId)
-
       if (!targetStage) return prev
 
-      // ── Within-column reordering ────────────────────────────────────────────
       if (sourceStage === targetStage) {
         if (isOverColumn) return prev
         const oldIndex = prev[sourceStage].findIndex((d) => d.id === activeId)
         const newIndex = prev[sourceStage].findIndex((d) => d.id === overId)
         if (oldIndex === newIndex) return prev
-        return {
-          ...prev,
-          [sourceStage]: arrayMove(prev[sourceStage], oldIndex, newIndex),
-        }
+        return { ...prev, [sourceStage]: arrayMove(prev[sourceStage], oldIndex, newIndex) }
       }
 
-      // ── Cross-column move ───────────────────────────────────────────────────
       const deal = prev[sourceStage].find((d) => d.id === activeId)!
       const updatedDeal: Deal = { ...deal, stageId: targetStage }
-
       let targetDeals = prev[targetStage].filter((d) => d.id !== activeId)
 
       if (!isOverColumn) {
         const overIndex = targetDeals.findIndex((d) => d.id === overId)
-
-        // Insere antes ou depois do card alvo conforme o cursor esteja
-        // acima ou abaixo do seu ponto médio vertical
         const isBelowMidpoint =
           active.rect.current.translated != null &&
-          active.rect.current.translated.top >
-            over.rect.top + over.rect.height / 2
-
+          active.rect.current.translated.top > over.rect.top + over.rect.height / 2
         const insertIndex = isBelowMidpoint ? overIndex + 1 : overIndex
-
         targetDeals = [
           ...targetDeals.slice(0, insertIndex),
           updatedDeal,
@@ -127,12 +136,20 @@ export function KanbanBoard() {
     })
   }
 
-  function onDragEnd(_event: DragEndEvent) {
+  function onDragEnd({ active }: DragEndEvent) {
     setActiveId(null)
-    // All reordering handled optimistically in onDragOver
+    const dealId = active.id as string
+
+    // Persist new stage + position using the always-current ref
+    const currentBoards = latestBoards.current
+    const stage = findDealStage(currentBoards, dealId)
+    if (stage) {
+      const position = currentBoards[stage].findIndex((d) => d.id === dealId)
+      updateDealStageAction(dealId, stage, position) // fire & forget
+    }
   }
 
-  // ── Form handlers ────────────────────────────────────────────────────────────
+  // ── Form handlers ──────────────────────────────────────────────────────────
 
   function openNewDeal(stageId: StageId) {
     setEditingDeal(null)
@@ -146,36 +163,58 @@ export function KanbanBoard() {
     setFormOpen(true)
   }
 
-  function handleSave(deal: Deal) {
-    setBoards((prev) => {
-      let next = { ...prev }
-
-      if (editingDeal) {
-        // Remove from old stage
+  async function handleSave(deal: Deal) {
+    if (editingDeal) {
+      // Optimistic update for edit
+      setBoards((prev) => {
         const oldStage = findDealStage(prev, editingDeal.id)!
-        next = { ...next, [oldStage]: next[oldStage].filter((d) => d.id !== editingDeal.id) }
-        // Add to new stage (may differ if user changed stage in form)
-        next = { ...next, [deal.stageId]: [...next[deal.stageId], deal] }
-      } else {
-        next = { ...next, [deal.stageId]: [...next[deal.stageId], deal] }
+        const next = {
+          ...prev,
+          [oldStage]: prev[oldStage].filter((d) => d.id !== editingDeal.id),
+        }
+        return { ...next, [deal.stageId]: [...next[deal.stageId], deal] }
+      })
+      setFormOpen(false)
+      await updateDealAction({
+        id: deal.id,
+        title: deal.title,
+        value: deal.value,
+        stage: deal.stageId,
+        leadId: deal.leadId,
+        dueDate: deal.dueDate,
+      })
+    } else {
+      // For new deals: call Server Action first to get real UUID
+      setFormOpen(false)
+      const created = await createDealAction({
+        title: deal.title,
+        value: deal.value,
+        stage: deal.stageId,
+        leadId: deal.leadId,
+        dueDate: deal.dueDate,
+      })
+      if (created) {
+        setBoards((prev) => ({
+          ...prev,
+          [created.stageId]: [...prev[created.stageId], created],
+        }))
       }
-
-      return next
-    })
-    setFormOpen(false)
+    }
   }
 
-  function handleDelete() {
+  async function handleDelete() {
     if (!editingDeal) return
+    const target = editingDeal
     setBoards((prev) => {
-      const stage = findDealStage(prev, editingDeal.id)
+      const stage = findDealStage(prev, target.id)
       if (!stage) return prev
-      return { ...prev, [stage]: prev[stage].filter((d) => d.id !== editingDeal.id) }
+      return { ...prev, [stage]: prev[stage].filter((d) => d.id !== target.id) }
     })
     setFormOpen(false)
+    await deleteDealAction(target.id)
   }
 
-  // ─────────────────────────────────────────────────────────────────────────────
+  // ─────────────────────────────────────────────────────────────────────────
 
   return (
     <>
@@ -185,7 +224,6 @@ export function KanbanBoard() {
         onDragOver={onDragOver}
         onDragEnd={onDragEnd}
       >
-        {/* Scrollable board */}
         <div className="flex gap-4 overflow-x-auto pb-6 pt-1 -mx-1 px-1">
           {STAGES.map((stage, index) => (
             <KanbanColumn
@@ -201,11 +239,7 @@ export function KanbanBoard() {
 
         <DragOverlay dropAnimation={{ duration: 180, easing: "ease" }}>
           {activeDeal && (
-            <DealCard
-              deal={activeDeal}
-              stageColor={activeStageColor}
-              isOverlay
-            />
+            <DealCard deal={activeDeal} stageColor={activeStageColor} isOverlay />
           )}
         </DragOverlay>
       </DndContext>
@@ -215,6 +249,7 @@ export function KanbanBoard() {
         onOpenChange={setFormOpen}
         deal={editingDeal}
         defaultStageId={defaultStage}
+        workspaceLeads={workspaceLeads}
         onSave={handleSave}
         onDelete={editingDeal ? handleDelete : undefined}
       />
