@@ -8,6 +8,8 @@ import { WORKSPACE_COOKIE } from '@/lib/workspaces'
 import { createInvite, acceptInvite, deleteInvite } from '@/lib/invites'
 import { getWorkspaceMembers } from '@/lib/members'
 import { sendInviteEmail } from '@/lib/email'
+import { canAddMember } from '@/lib/limits'
+import { FREE_LIMITS } from '@/lib/plan-config'
 import type { WorkspaceRow, WorkspaceMemberRole } from '@/src/types/supabase'
 // WorkspaceRow usado em createWorkspace; WorkspaceMemberRole em inviteMemberAction
 
@@ -109,23 +111,24 @@ export async function inviteMemberAction(
   const supabase = await createServiceClient()
 
   // Verificar se o e-mail já é membro
-  const members = await getWorkspaceMembers(workspaceId)
+  const [members, limitResult] = await Promise.all([
+    getWorkspaceMembers(workspaceId),
+    canAddMember(workspaceId),
+  ])
   const alreadyMember = members.some((m) => m.email.toLowerCase() === email.toLowerCase())
   if (alreadyMember) return { error: 'Este e-mail já é membro do workspace' }
 
-  // Limite do plano Free: máximo 2 membros
-  const { data: workspace } = await supabase
-    .from('workspaces')
-    .select('name, plan')
-    .eq('id', workspaceId)
-    .single()
-
-  if (workspace?.plan === 'free' && members.length >= 2) {
+  if (!limitResult.allowed) {
     return {
-      error:
-        'O plano Free permite até 2 membros. Faça upgrade para Pro para convidar mais pessoas.',
+      error: `O plano Free permite até ${FREE_LIMITS.members} membros. Faça upgrade para Pro para convidar mais pessoas.`,
     }
   }
+
+  const { data: workspace } = await supabase
+    .from('workspaces')
+    .select('name')
+    .eq('id', workspaceId)
+    .single()
 
   const { invite, error } = await createInvite(workspaceId, email, role, user.id)
   if (error || !invite) return { error: error ?? 'Erro ao criar convite' }

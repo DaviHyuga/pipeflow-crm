@@ -28,10 +28,10 @@ async function getWorkspaceOrRedirect() {
   return { workspaceId, user, workspace }
 }
 
-export async function startCheckoutAction() {
+export async function startCheckoutAction(): Promise<{ url: string } | { error: string }> {
   const { workspaceId, user, workspace } = await getWorkspaceOrRedirect()
 
-  if (workspace.plan === 'pro') redirect('/settings/billing')
+  if (workspace.plan === 'pro') return { error: 'Já possui plano Pro' }
 
   const customerId = await getOrCreateStripeCustomer(
     workspaceId,
@@ -51,18 +51,18 @@ export async function startCheckoutAction() {
     },
   })
 
-  redirect(session.url!)
+  return { url: session.url! }
 }
 
-export async function openPortalAction() {
+export async function openPortalAction(): Promise<{ url: string } | { error: string }> {
   const { workspace } = await getWorkspaceOrRedirect()
 
-  if (!workspace.stripe_customer_id) redirect('/settings/billing')
+  if (!workspace.stripe_customer_id) return { error: 'Cliente Stripe não encontrado' }
 
   const session = await stripe.billingPortal.sessions.create({
     customer: workspace.stripe_customer_id,
     return_url: `${process.env.NEXT_PUBLIC_APP_URL}/settings/billing`,
   })
 
-  redirect(session.url)
+  return { url: session.url }
 }
