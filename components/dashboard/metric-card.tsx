@@ -1,4 +1,4 @@
-import { Users, Briefcase, DollarSign, TrendingUp } from "lucide-react"
+import { Users, Briefcase, DollarSign, TrendingUp, TrendingDown } from "lucide-react"
 import { Card, CardContent } from "@/components/ui/card"
 import type { DashboardMetric } from "@/types/dashboard"
 
@@ -45,9 +45,13 @@ export function MetricCard({ metric }: MetricCardProps) {
 
         {/* Trend */}
         <div className="mt-2 flex items-center gap-1.5">
-          <TrendingUp className="size-3.5 text-emerald-400" />
-          <span className="text-xs font-semibold text-emerald-400">
-            +{metric.change}%
+          {isPositive ? (
+            <TrendingUp className="size-3.5 text-emerald-400" />
+          ) : (
+            <TrendingDown className="size-3.5 text-red-400" />
+          )}
+          <span className={`text-xs font-semibold ${isPositive ? "text-emerald-400" : "text-red-400"}`}>
+            {isPositive ? "+" : ""}{metric.change}%
           </span>
           <span className="text-xs text-muted-foreground">vs mês anterior</span>
         </div>

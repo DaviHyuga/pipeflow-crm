@@ -39,6 +39,7 @@ create index if not exists deals_due_date_idx   on deals(workspace_id, due_date)
 create index if not exists deals_kanban_order_idx on deals(workspace_id, stage, position);
 
 -- Trigger updated_at
+drop trigger if exists deals_updated_at on deals;
 create trigger deals_updated_at
   before update on deals
   for each row execute function set_updated_at();
@@ -46,18 +47,22 @@ create trigger deals_updated_at
 -- RLS
 alter table deals enable row level security;
 
+drop policy if exists "deals_select" on deals;
 create policy "deals_select"
   on deals for select
   using (is_workspace_member(workspace_id));
 
+drop policy if exists "deals_insert" on deals;
 create policy "deals_insert"
   on deals for insert
   with check (is_workspace_member(workspace_id));
 
+drop policy if exists "deals_update" on deals;
 create policy "deals_update"
   on deals for update
   using (is_workspace_member(workspace_id));
 
+drop policy if exists "deals_delete" on deals;
 create policy "deals_delete"
   on deals for delete
   using (is_workspace_member(workspace_id));

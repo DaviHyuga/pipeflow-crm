@@ -2,6 +2,16 @@ import { Resend } from 'resend'
 
 const resend = new Resend(process.env.RESEND_API_KEY)
 
+/** Escapes HTML special characters to prevent XSS in email templates. */
+function escapeHtml(str: string): string {
+  return str
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;')
+}
+
 export async function sendInviteEmail({
   to,
   workspaceName,
@@ -37,6 +47,12 @@ function buildInviteHtml({
   inviterEmail: string
   inviteUrl: string
 }): string {
+  // Escape all user-controlled values before interpolation into HTML
+  const safeInviterEmail = escapeHtml(inviterEmail)
+  const safeWorkspaceName = escapeHtml(workspaceName)
+  // inviteUrl is internally generated — still escape attribute context
+  const safeInviteUrl = escapeHtml(inviteUrl)
+
   return `<!DOCTYPE html>
 <html lang="pt-BR">
 <head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"></head>
@@ -58,12 +74,12 @@ function buildInviteHtml({
           <td style="padding:32px">
             <h1 style="margin:0 0 12px;font-size:22px;font-weight:600;color:#09090b">Você foi convidado!</h1>
             <p style="margin:0 0 20px;font-size:15px;color:#52525b;line-height:1.6">
-              <strong style="color:#18181b">${inviterEmail}</strong> te convidou para colaborar no workspace
-              <strong style="color:#18181b">${workspaceName}</strong> no PipeFlow CRM.
+              <strong style="color:#18181b">${safeInviterEmail}</strong> te convidou para colaborar no workspace
+              <strong style="color:#18181b">${safeWorkspaceName}</strong> no PipeFlow CRM.
             </p>
             <table cellpadding="0" cellspacing="0" style="margin:24px 0">
               <tr><td style="background:#3b5bf5;border-radius:8px">
-                <a href="${inviteUrl}" style="display:inline-block;padding:12px 28px;color:#fff;font-size:15px;font-weight:600;text-decoration:none">
+                <a href="${safeInviteUrl}" style="display:inline-block;padding:12px 28px;color:#fff;font-size:15px;font-weight:600;text-decoration:none">
                   Aceitar convite
                 </a>
               </td></tr>
@@ -76,7 +92,7 @@ function buildInviteHtml({
         <tr>
           <td style="padding:16px 32px;background:#fafafa;border-top:1px solid #f4f4f5">
             <p style="margin:0;font-size:12px;color:#a1a1aa">
-              PipeFlow CRM &middot; <a href="${inviteUrl}" style="color:#3b5bf5">${inviteUrl}</a>
+              PipeFlow CRM &middot; <a href="${safeInviteUrl}" style="color:#3b5bf5">${safeInviteUrl}</a>
             </p>
           </td>
         </tr>

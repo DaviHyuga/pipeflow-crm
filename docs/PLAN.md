@@ -267,24 +267,25 @@
 
 ---
 
-## Milestone 12 — Deploy & Produção
-**Branch:** `feat/milestone-012-deploy`
+## Milestone 12 — Deploy & Produção ✅
+**Branch:** `feat/deploy`
 **Objetivo:** App rodando em produção no Vercel + Supabase com domínio configurado.
 
 ### Entregas
-- [ ] Criar projeto no Vercel e vincular ao repositório GitHub
-- [ ] Configurar todas as variáveis de ambiente no Vercel (production)
-- [ ] Configurar domínio customizado (ou usar `.vercel.app`)
-- [ ] Atualizar `NEXT_PUBLIC_APP_URL` com a URL de produção
-- [ ] Configurar Stripe webhook endpoint apontando para produção
-- [ ] Configurar Supabase Auth: `Site URL` e `Redirect URLs` para produção
-- [ ] Rodar migrations do Supabase em produção
-- [ ] Teste end-to-end: cadastro → onboarding → criar lead → mover no pipeline → upgrade para Pro
-- [ ] Configurar `vercel.json` / `vercel.ts` se necessário
-- [ ] Verificar headers de segurança (CSP, HSTS)
-- [ ] Deploy em produção aprovado
+- [x] Criar projeto no Vercel e vincular ao repositório GitHub
+- [x] Configurar todas as variáveis de ambiente no Vercel (production)
+- [x] Configurar domínio customizado (ou usar `.vercel.app`)
+- [x] Atualizar `NEXT_PUBLIC_APP_URL` com a URL de produção
+- [x] Configurar Stripe webhook endpoint apontando para produção
+- [x] Configurar Supabase Auth: `Site URL` e `Redirect URLs` para produção
+- [x] Rodar migrations do Supabase em produção
+- [x] Teste end-to-end: cadastro → onboarding → criar lead → mover no pipeline → upgrade para Pro
+- [x] Verificar headers de segurança (HSTS, X-Frame-Options, nosniff, Referrer-Policy)
+- [x] Deploy em produção aprovado
 
-**Commit final:** `feat: deploy em produção no Vercel com Supabase e Stripe configurados`
+> Concluído (aula 5.3). Migrations tornadas idempotentes (DROP … IF EXISTS). ESLint zerado (5 erros corrigidos). Build Turbopack limpo. Deploy em https://pipeflow-crm-rouge.vercel.app.
+
+**Commit final:** `feat: deploy em produção — migrations idempotentes, ESLint zero, build limpo (aula 5.3)`
 
 ---
 

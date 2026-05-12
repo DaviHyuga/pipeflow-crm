@@ -48,69 +48,71 @@ export function UpcomingDeals({ deals }: UpcomingDealsProps) {
         <CardTitle>Negócios com Prazo Próximo</CardTitle>
       </CardHeader>
       <CardContent className="p-0">
-        {/* Table header */}
-        <div className="grid grid-cols-[1fr_1fr_auto_auto] gap-4 border-b border-border px-6 pb-2">
-          <span className="text-sm text-muted-foreground">Negócio</span>
-          <span className="text-sm text-muted-foreground">Lead</span>
-          <span className="text-sm text-muted-foreground">Etapa</span>
-          <span className="text-sm text-muted-foreground">Prazo</span>
-        </div>
+        <div className="overflow-x-auto">
+          {/* Table header */}
+          <div className="grid grid-cols-[1fr_auto_auto] sm:grid-cols-[1fr_1fr_auto_auto] gap-4 border-b border-border px-6 pb-2 min-w-[360px]">
+            <span className="text-sm text-muted-foreground">Negócio</span>
+            <span className="text-sm text-muted-foreground hidden sm:block">Lead</span>
+            <span className="text-sm text-muted-foreground">Etapa</span>
+            <span className="text-sm text-muted-foreground">Prazo</span>
+          </div>
 
-        {/* Rows */}
-        <div className="divide-y divide-border">
-          {deals.map((deal) => {
-            const days = getDaysUntil(deal.dueDate)
-            const isVencido = days < 0
-            const isUrgente = days >= 0 && days <= 3
+          {/* Rows */}
+          <div className="divide-y divide-border min-w-[360px]">
+            {deals.map((deal) => {
+              const days = getDaysUntil(deal.dueDate)
+              const isVencido = days < 0
+              const isUrgente = days >= 0 && days <= 3
 
-            return (
-              <div
-                key={deal.id}
-                className="grid grid-cols-[1fr_1fr_auto_auto] items-center gap-4 px-6 py-4 hover:bg-muted/30 transition-colors"
-              >
-                {/* Negócio */}
-                <div className="min-w-0">
-                  <p className="truncate text-base font-semibold">{deal.title}</p>
-                  <p className="truncate text-sm text-muted-foreground">{deal.owner}</p>
-                </div>
+              return (
+                <div
+                  key={deal.id}
+                  className="grid grid-cols-[1fr_auto_auto] sm:grid-cols-[1fr_1fr_auto_auto] items-center gap-4 px-6 py-4 hover:bg-muted/30 transition-colors"
+                >
+                  {/* Negócio */}
+                  <div className="min-w-0">
+                    <p className="truncate text-base font-semibold">{deal.title}</p>
+                    <p className="truncate text-sm text-muted-foreground">{deal.owner}</p>
+                  </div>
 
-                {/* Lead */}
-                <div className="min-w-0">
-                  <p className="truncate text-base font-medium">{deal.leadName}</p>
-                  <p className="truncate text-sm text-muted-foreground">{deal.company}</p>
-                </div>
+                  {/* Lead — hidden on mobile */}
+                  <div className="min-w-0 hidden sm:block">
+                    <p className="truncate text-base font-medium">{deal.leadName}</p>
+                    <p className="truncate text-sm text-muted-foreground">{deal.company}</p>
+                  </div>
 
-                {/* Etapa */}
-                <StageBadge label={deal.stageLabel} color={deal.stageColor} />
+                  {/* Etapa */}
+                  <StageBadge label={deal.stageLabel} color={deal.stageColor} />
 
-                {/* Prazo */}
-                <div className="flex items-center gap-1.5 whitespace-nowrap">
-                  <Clock
-                    className={`size-3.5 shrink-0 ${
-                      isVencido || isUrgente ? "text-red-500" : "text-muted-foreground"
-                    }`}
-                  />
-                  <span
-                    className={`text-sm ${
-                      isVencido || isUrgente ? "text-red-400" : "text-muted-foreground"
-                    }`}
-                  >
-                    {formatDate(deal.dueDate)}
-                  </span>
-                  {isVencido && (
-                    <span className="rounded-full bg-red-500/20 px-1.5 py-0.5 text-[10px] font-semibold text-red-500">
-                      Vencido
+                  {/* Prazo */}
+                  <div className="flex items-center gap-1.5 whitespace-nowrap">
+                    <Clock
+                      className={`size-3.5 shrink-0 ${
+                        isVencido || isUrgente ? "text-red-500" : "text-muted-foreground"
+                      }`}
+                    />
+                    <span
+                      className={`text-sm ${
+                        isVencido || isUrgente ? "text-red-400" : "text-muted-foreground"
+                      }`}
+                    >
+                      {formatDate(deal.dueDate)}
                     </span>
-                  )}
-                  {isUrgente && (
-                    <span className="rounded-full bg-amber-500/20 px-1.5 py-0.5 text-[10px] font-semibold text-amber-500">
-                      Urgente
-                    </span>
-                  )}
+                    {isVencido && (
+                      <span className="rounded-full bg-red-500/20 px-1.5 py-0.5 text-[10px] font-semibold text-red-500">
+                        Vencido
+                      </span>
+                    )}
+                    {isUrgente && (
+                      <span className="rounded-full bg-amber-500/20 px-1.5 py-0.5 text-[10px] font-semibold text-amber-500">
+                        Urgente
+                      </span>
+                    )}
+                  </div>
                 </div>
-              </div>
-            )
-          })}
+              )
+            })}
+          </div>
         </div>
       </CardContent>
     </Card>

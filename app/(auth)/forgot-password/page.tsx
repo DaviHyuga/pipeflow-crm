@@ -39,7 +39,7 @@ export default function ForgotPasswordPage() {
 
   if (sent) {
     return (
-      <div className="rounded-xl border border-border bg-card p-8 shadow-sm text-center">
+      <div className="rounded-xl border border-border bg-card p-6 sm:p-8 shadow-sm text-center">
         <div className="mb-4 flex justify-center">
           <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
             <svg
@@ -77,7 +77,7 @@ export default function ForgotPasswordPage() {
   }
 
   return (
-    <div className="rounded-xl border border-border bg-card p-8 shadow-sm">
+    <div className="rounded-xl border border-border bg-card p-6 sm:p-8 shadow-sm">
       <div className="mb-6">
         <h1 className="text-xl font-semibold text-foreground">Recuperar senha</h1>
         <p className="mt-1 text-sm text-muted-foreground">

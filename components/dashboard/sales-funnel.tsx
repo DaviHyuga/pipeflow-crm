@@ -49,10 +49,10 @@ export function SalesFunnel({ data }: SalesFunnelProps) {
         <CardTitle>Negócios por Etapa</CardTitle>
       </CardHeader>
       <CardContent className="pb-4">
-        <ResponsiveContainer width="100%" height={300}>
+        <ResponsiveContainer width="100%" height={320}>
           <BarChart
             data={data}
-            margin={{ top: 8, right: 8, bottom: 8, left: -16 }}
+            margin={{ top: 8, right: 8, bottom: 40, left: -16 }}
             barCategoryGap="28%"
           >
             <CartesianGrid
@@ -62,9 +62,12 @@ export function SalesFunnel({ data }: SalesFunnelProps) {
             />
             <XAxis
               dataKey="label"
-              tick={{ fontSize: 13, fill: "hsl(var(--muted-foreground))" }}
+              tick={{ fontSize: 12, fill: "hsl(var(--muted-foreground))" }}
               tickLine={false}
               axisLine={false}
+              angle={-30}
+              textAnchor="end"
+              interval={0}
             />
             <YAxis
               allowDecimals={true}

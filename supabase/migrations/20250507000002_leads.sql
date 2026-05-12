@@ -32,6 +32,7 @@ create index if not exists leads_search_idx       on leads using gin(
 );
 
 -- Trigger updated_at
+drop trigger if exists leads_updated_at on leads;
 create trigger leads_updated_at
   before update on leads
   for each row execute function set_updated_at();
@@ -39,18 +40,22 @@ create trigger leads_updated_at
 -- RLS
 alter table leads enable row level security;
 
+drop policy if exists "leads_select" on leads;
 create policy "leads_select"
   on leads for select
   using (is_workspace_member(workspace_id));
 
+drop policy if exists "leads_insert" on leads;
 create policy "leads_insert"
   on leads for insert
   with check (is_workspace_member(workspace_id));
 
+drop policy if exists "leads_update" on leads;
 create policy "leads_update"
   on leads for update
   using (is_workspace_member(workspace_id));
 
+drop policy if exists "leads_delete" on leads;
 create policy "leads_delete"
   on leads for delete
   using (is_workspace_member(workspace_id));
@@ -76,10 +81,12 @@ create index if not exists activities_user_idx      on activities(workspace_id, 
 -- RLS
 alter table activities enable row level security;
 
+drop policy if exists "activities_select" on activities;
 create policy "activities_select"
   on activities for select
   using (is_workspace_member(workspace_id));
 
+drop policy if exists "activities_insert" on activities;
 create policy "activities_insert"
   on activities for insert
   with check (
@@ -87,6 +94,7 @@ create policy "activities_insert"
     and user_id = auth.uid()
   );
 
+drop policy if exists "activities_update" on activities;
 create policy "activities_update"
   on activities for update
   using (
@@ -94,6 +102,7 @@ create policy "activities_update"
     and user_id = auth.uid()
   );
 
+drop policy if exists "activities_delete" on activities;
 create policy "activities_delete"
   on activities for delete
   using (

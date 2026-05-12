@@ -78,7 +78,7 @@ export default function SignupPage() {
 
   if (confirmationSent) {
     return (
-      <div className="rounded-xl border border-border bg-card p-8 shadow-sm text-center">
+      <div className="rounded-xl border border-border bg-card p-6 sm:p-8 shadow-sm text-center">
         <div className="mb-4 flex justify-center">
           <div className="flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
             <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-primary">
@@ -102,7 +102,7 @@ export default function SignupPage() {
   }
 
   return (
-    <div className="rounded-xl border border-border bg-card p-8 shadow-sm">
+    <div className="rounded-xl border border-border bg-card p-6 sm:p-8 shadow-sm">
       <div className="mb-6">
         <h1 className="text-xl font-semibold text-foreground">Criar sua conta</h1>
         <p className="mt-1 text-sm text-muted-foreground">
