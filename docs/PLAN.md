@@ -237,7 +237,7 @@
 ---
 
 ## Milestone 11 — Monetização (Stripe)
-**Branch:** `feat/milestone-011-stripe`
+**Branch:** `feat/billing`
 **Objetivo:** Planos Free e Pro com checkout Stripe, webhook e Customer Portal funcionando.
 
 ### Entregas
@@ -245,15 +245,19 @@
 - [x] Schema Supabase: coluna `plan` e `stripe_customer_id` em `workspaces`
 - [x] Schema Supabase: tabela `subscriptions` espelhando estado do Stripe
 - [x] RLS policies para `subscriptions` (leitura para membros; escrita exclusiva via service_role)
-- [ ] `lib/stripe.ts` — cliente Stripe + funções helpers
-- [ ] Página `/app/(app)/settings/billing` — exibir plano atual e botão de upgrade
-- [ ] Route Handler `/app/api/stripe/checkout/route.ts` — criar Stripe Checkout Session
-- [ ] Route Handler `/app/api/stripe/portal/route.ts` — criar Customer Portal Session
-- [ ] Route Handler `/app/api/stripe/webhook/route.ts` — processar eventos (checkout.session.completed, customer.subscription.updated, customer.subscription.deleted)
-- [ ] Webhook atualiza `plan` no workspace via Supabase
+- [x] `lib/stripe.ts` — cliente Stripe singleton + `getOrCreateStripeCustomer`
+- [x] Página `/app/(app)/settings/billing` — plano atual, data de renovação, barras de uso, features Pro
+- [x] Server Action `startCheckoutAction` — cria Checkout Session e redireciona (sem Route Handler)
+- [x] Server Action `openPortalAction` — cria Customer Portal Session e redireciona (sem Route Handler)
+- [x] Route Handler `/app/api/stripe/webhook/route.ts` — único exception; lê body raw + verifica assinatura
+- [x] Webhook processa `checkout.session.completed` → ativa plano Pro
+- [x] Webhook processa `customer.subscription.updated` → sincroniza status
+- [x] Webhook processa `customer.subscription.deleted` → volta para Free
 - [ ] Enforcer de limites do plano Free: bloquear ao atingir 2 membros ou 50 leads
 - [ ] Banner de upgrade quando próximo do limite
 - [ ] Testar com Stripe CLI + cartões de teste
+
+> Checkout, webhook e Customer Portal concluídos (aula 4.1). Checkout e portal via Server Actions; webhook como único Route Handler (necessidade de body raw).
 
 **Commit final:** `feat: monetização Stripe com checkout, webhook e Customer Portal`
 
