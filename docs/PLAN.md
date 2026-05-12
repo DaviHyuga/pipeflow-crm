@@ -236,26 +236,34 @@
 
 ---
 
-## Milestone 11 — Monetização (Stripe)
-**Branch:** `feat/milestone-011-stripe`
+## Milestone 11 — Monetização (Stripe) ✅
+**Branch:** `feat/billing-nextjs`
 **Objetivo:** Planos Free e Pro com checkout Stripe, webhook e Customer Portal funcionando.
 
 ### Entregas
-- [ ] Criar produtos e preços no Stripe Dashboard (Free e Pro R$49/mês)
+- [x] Criar produtos e preços no Stripe Dashboard (Free e Pro R$49/mês)
 - [x] Schema Supabase: coluna `plan` e `stripe_customer_id` em `workspaces`
 - [x] Schema Supabase: tabela `subscriptions` espelhando estado do Stripe
 - [x] RLS policies para `subscriptions` (leitura para membros; escrita exclusiva via service_role)
-- [ ] `lib/stripe.ts` — cliente Stripe + funções helpers
-- [ ] Página `/app/(app)/settings/billing` — exibir plano atual e botão de upgrade
-- [ ] Route Handler `/app/api/stripe/checkout/route.ts` — criar Stripe Checkout Session
-- [ ] Route Handler `/app/api/stripe/portal/route.ts` — criar Customer Portal Session
-- [ ] Route Handler `/app/api/stripe/webhook/route.ts` — processar eventos (checkout.session.completed, customer.subscription.updated, customer.subscription.deleted)
-- [ ] Webhook atualiza `plan` no workspace via Supabase
-- [ ] Enforcer de limites do plano Free: bloquear ao atingir 2 membros ou 50 leads
-- [ ] Banner de upgrade quando próximo do limite
-- [ ] Testar com Stripe CLI + cartões de teste
+- [x] `lib/stripe.ts` — cliente Stripe singleton + `getOrCreateStripeCustomer`
+- [x] `lib/plan-config.ts` — constantes de limites (`FREE_LIMITS`) sem dependências server-only
+- [x] `lib/limits.ts` — `canAddLead()` e `canAddMember()` verificam plano + contagem no banco
+- [x] Página `/settings/billing` redesenhada: card plano atual + tabela comparativa Free vs Pro
+- [x] Settings nav horizontal com tabs (Workspace | Membros | Assinatura)
+- [x] `startCheckoutAction` — retorna URL; abre Checkout Session em nova aba
+- [x] `openPortalAction` — retorna URL; abre Customer Portal em nova aba
+- [x] Route Handler `/api/webhooks/stripe/route.ts` — body raw + verificação de assinatura
+- [x] Webhook processa `checkout.session.completed` → ativa plano Pro
+- [x] Webhook processa `customer.subscription.updated` → sincroniza status
+- [x] Webhook processa `customer.subscription.deleted` → volta para Free
+- [x] Enforcer de limites Free: bloqueia criação de lead ao atingir 50 (Server Action + UI)
+- [x] Banner de upgrade em leads: aviso em ≥ 80% e bloqueio ao atingir limite
+- [x] Banner de upgrade em membros: aviso + botão desabilitado ao atingir limite
+- [x] Testado com Stripe CLI + cartões de teste no sandbox
 
-**Commit final:** `feat: monetização Stripe com checkout, webhook e Customer Portal`
+> Concluído (aulas 4.1 + 4.2). Checkout e portal abrem em nova aba; limites de plano Free enforçados no servidor e na UI.
+
+**Commit final:** `feat: limites de plano, billing redesign e checkout em nova aba (aula 4.2)`
 
 ---
 

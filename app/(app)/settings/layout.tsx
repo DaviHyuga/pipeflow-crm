@@ -6,16 +6,13 @@ export default function SettingsLayout({ children }: { children: React.ReactNode
       <div className="mb-6">
         <h1 className="text-2xl font-bold tracking-tight">Configurações</h1>
         <p className="mt-1 text-sm text-muted-foreground">
-          Gerencie seu workspace, equipe e faturamento.
+          Gerencie o workspace e os membros da equipe.
         </p>
       </div>
 
-      <div className="flex gap-8">
-        <aside className="w-44 shrink-0">
-          <SettingsNav />
-        </aside>
-        <div className="min-w-0 flex-1">{children}</div>
-      </div>
+      <SettingsNav />
+
+      <div className="mt-6">{children}</div>
     </div>
   )
 }

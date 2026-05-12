@@ -22,7 +22,7 @@ import {
   DialogTitle,
   DialogFooter,
 } from "@/components/ui/dialog"
-import { Plus, Search, MoreHorizontal, ExternalLink, Pencil, Trash2 } from "lucide-react"
+import { Plus, Search, MoreHorizontal, ExternalLink, Pencil, Trash2, AlertTriangle } from "lucide-react"
 import { createLeadAction, updateLeadAction, deleteLeadAction } from "@/app/(app)/leads/actions"
 
 const STATUS_OPTIONS: { value: LeadStatus | "all"; label: string }[] = [
@@ -57,9 +57,14 @@ interface LeadsViewProps {
   currentSearch: string
   currentStatus: string
   ownerDisplay: string
+  plan: 'free' | 'pro'
+  totalLeadsCount: number
+  leadsLimit: number | null
 }
 
-export function LeadsView({ leads, currentSearch, currentStatus, ownerDisplay }: LeadsViewProps) {
+export function LeadsView({ leads, currentSearch, currentStatus, ownerDisplay, plan, totalLeadsCount, leadsLimit }: LeadsViewProps) {
+  const atLimit = plan === 'free' && leadsLimit !== null && totalLeadsCount >= leadsLimit
+  const nearLimit = plan === 'free' && leadsLimit !== null && !atLimit && totalLeadsCount >= leadsLimit * 0.8
   const router = useRouter()
   const [search, setSearch] = useState(currentSearch)
   const [statusFilter, setStatusFilter] = useState(currentStatus)
@@ -67,6 +72,7 @@ export function LeadsView({ leads, currentSearch, currentStatus, ownerDisplay }:
   const [selectedLead, setSelectedLead] = useState<Lead | null>(null)
   const [deleteTarget, setDeleteTarget] = useState<Lead | null>(null)
   const [isPending, setIsPending] = useState(false)
+  const [actionError, setActionError] = useState('')
   const statusFilterRef = useRef(statusFilter)
   statusFilterRef.current = statusFilter
 
@@ -101,6 +107,7 @@ export function LeadsView({ leads, currentSearch, currentStatus, ownerDisplay }:
 
   async function handleSave(saved: Lead) {
     setFormOpen(false)
+    setActionError('')
     setIsPending(true)
     try {
       if (selectedLead) {
@@ -115,7 +122,7 @@ export function LeadsView({ leads, currentSearch, currentStatus, ownerDisplay }:
           estimatedValue: saved.estimatedValue,
         })
       } else {
-        await createLeadAction({
+        const result = await createLeadAction({
           name: saved.name,
           email: saved.email,
           phone: saved.phone,
@@ -125,6 +132,10 @@ export function LeadsView({ leads, currentSearch, currentStatus, ownerDisplay }:
           notes: saved.notes,
           estimatedValue: saved.estimatedValue,
         })
+        if (result && 'error' in result) {
+          setActionError(result.error)
+          return
+        }
       }
       router.refresh()
     } finally {
@@ -158,11 +169,44 @@ export function LeadsView({ leads, currentSearch, currentStatus, ownerDisplay }:
             {leads.length} {leads.length === 1 ? "lead encontrado" : "leads encontrados"}
           </p>
         </div>
-        <Button onClick={openCreate} disabled={isPending}>
+        <Button onClick={openCreate} disabled={isPending || atLimit}>
           <Plus className="h-4 w-4" />
           Novo Lead
         </Button>
       </div>
+
+      {/* Erro de action */}
+      {actionError && (
+        <div className="rounded-lg border border-destructive/30 bg-destructive/10 px-4 py-3 text-sm text-destructive">
+          {actionError}
+        </div>
+      )}
+
+      {/* Aviso de limite */}
+      {atLimit && (
+        <div className="flex items-start gap-3 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800 dark:border-amber-800 dark:bg-amber-950/40 dark:text-amber-400">
+          <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
+          <span>
+            Limite de {leadsLimit} leads do plano Free atingido.{' '}
+            <a href="/settings/billing" className="font-medium underline underline-offset-2">
+              Faça upgrade para Pro
+            </a>{' '}
+            para adicionar mais leads.
+          </span>
+        </div>
+      )}
+      {nearLimit && (
+        <div className="flex items-start gap-3 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800 dark:border-amber-800 dark:bg-amber-950/40 dark:text-amber-400">
+          <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
+          <span>
+            Você usou {totalLeadsCount} de {leadsLimit} leads do plano Free.{' '}
+            <a href="/settings/billing" className="font-medium underline underline-offset-2">
+              Faça upgrade para Pro
+            </a>{' '}
+            para não ficar sem espaço.
+          </span>
+        </div>
+      )}
 
       {/* Filtros */}
       <div className="flex flex-col gap-2 sm:flex-row sm:items-center">

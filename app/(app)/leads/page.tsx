@@ -3,6 +3,7 @@ import { redirect } from 'next/navigation'
 import { WORKSPACE_COOKIE } from '@/lib/workspaces'
 import { getLeads } from '@/lib/leads'
 import { createClient } from '@/lib/supabase/server'
+import { canAddLead } from '@/lib/limits'
 import { LeadsView } from '@/components/leads/leads-view'
 
 interface LeadsPageProps {
@@ -19,7 +20,10 @@ export default async function LeadsPage({ searchParams }: LeadsPageProps) {
   const ownerDisplay = user?.email?.split('@')[0] ?? ''
 
   const { q, status } = await searchParams
-  const leads = await getLeads(workspaceId, { q, status })
+  const [leads, limitResult] = await Promise.all([
+    getLeads(workspaceId, { q, status }),
+    canAddLead(workspaceId),
+  ])
 
   return (
     <LeadsView
@@ -27,6 +31,9 @@ export default async function LeadsPage({ searchParams }: LeadsPageProps) {
       currentSearch={q ?? ''}
       currentStatus={status ?? 'all'}
       ownerDisplay={ownerDisplay}
+      plan={limitResult.plan}
+      totalLeadsCount={limitResult.used}
+      leadsLimit={limitResult.limit}
     />
   )
 }

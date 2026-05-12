@@ -10,9 +10,9 @@ import { cn } from "@/lib/utils"
 
 function KanbanPreview() {
   const cols = [
-    { label: "Novo Lead", color: "text-blue-400", bg: "bg-blue-500/8 border-blue-500/20", deals: ["Contrato ABC", "Proposta XYZ"] },
-    { label: "Negociação", color: "text-violet-400", bg: "bg-violet-500/8 border-violet-500/20", deals: ["Enterprise Corp", "Startup BR"] },
-    { label: "Fechado ✓", color: "text-emerald-400", bg: "bg-emerald-500/8 border-emerald-500/20", deals: ["Inovação Ltda"] },
+    { label: "Novo Lead", color: "text-blue-400", bg: "bg-blue-500/8 border-blue-500/20", deals: [{ name: "Contrato ABC", val: "12" }, { name: "Proposta XYZ", val: "28" }] },
+    { label: "Negociação", color: "text-violet-400", bg: "bg-violet-500/8 border-violet-500/20", deals: [{ name: "Enterprise Corp", val: "45" }, { name: "Startup BR", val: "19" }] },
+    { label: "Fechado ✓", color: "text-emerald-400", bg: "bg-emerald-500/8 border-emerald-500/20", deals: [{ name: "Inovação Ltda", val: "33" }] },
   ]
   return (
     <div className="rounded-xl border border-white/10 bg-[oklch(0.15_0_0)] overflow-hidden h-full">
@@ -27,9 +27,9 @@ function KanbanPreview() {
           <div key={col.label} className="flex-1 min-w-0">
             <div className={`text-[9px] font-semibold uppercase tracking-wider mb-2 ${col.color}`}>{col.label}</div>
             {col.deals.map((deal) => (
-              <div key={deal} className={`rounded-lg border p-2 mb-1.5 ${col.bg}`}>
-                <div className="text-[10px] font-medium text-white/75">{deal}</div>
-                <div className="text-[9px] text-white/35 mt-0.5">R$ {Math.floor(Math.random() * 40 + 8)}.000</div>
+              <div key={deal.name} className={`rounded-lg border p-2 mb-1.5 ${col.bg}`}>
+                <div className="text-[10px] font-medium text-white/75">{deal.name}</div>
+                <div className="text-[9px] text-white/35 mt-0.5">R$ {deal.val}.000</div>
               </div>
             ))}
           </div>

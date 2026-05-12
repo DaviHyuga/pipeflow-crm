@@ -34,10 +34,8 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="pt-BR" className={`${jakartaSans.variable} ${geistMono.variable}`}>
-      <head>
-        <Script id="theme-script" strategy="beforeInteractive" dangerouslySetInnerHTML={{ __html: themeScript }} />
-      </head>
       <body className="min-h-screen bg-background text-foreground antialiased">
+        <Script id="theme-script" strategy="beforeInteractive" dangerouslySetInnerHTML={{ __html: themeScript }} />
         <ThemeProvider>
           <TooltipProvider>{children}</TooltipProvider>
         </ThemeProvider>

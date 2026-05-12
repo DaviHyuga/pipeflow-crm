@@ -6,6 +6,7 @@ import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import { WORKSPACE_COOKIE } from '@/lib/workspaces'
 import { createLead, updateLead, deleteLead, createActivity } from '@/lib/leads'
+import { canAddLead } from '@/lib/limits'
 import type { Lead } from '@/types/lead'
 
 async function getContext(): Promise<{ userId: string; workspaceId: string }> {
@@ -31,8 +32,12 @@ export async function createLeadAction(data: {
   status: string
   notes: string
   estimatedValue: number
-}): Promise<Lead | null> {
+}): Promise<Lead | { error: string } | null> {
   const { userId, workspaceId } = await getContext()
+  const limit = await canAddLead(workspaceId)
+  if (!limit.allowed) {
+    return { error: `Limite de ${limit.limit} leads do plano Free atingido. Faça upgrade para Pro.` }
+  }
   const lead = await createLead(workspaceId, userId, data)
   revalidatePath('/leads')
   return lead

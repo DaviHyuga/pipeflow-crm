@@ -10,7 +10,7 @@ import { UserPlus, UserMinus, X, AlertTriangle } from 'lucide-react'
 import type { MemberWithEmail } from '@/lib/members'
 import type { PendingInvite } from '@/lib/invites'
 
-const FREE_MEMBER_LIMIT = 2
+import { FREE_LIMITS } from '@/lib/plan-config'
 
 interface MembersViewProps {
   members: MemberWithEmail[]
@@ -37,7 +37,7 @@ export function MembersView({
   const [, startTransition] = useTransition()
 
   const isAdmin = currentUserRole === 'admin'
-  const atFreeLimitWarning = plan === 'free' && members.length >= FREE_MEMBER_LIMIT
+  const atFreeLimitWarning = plan === 'free' && members.length >= FREE_LIMITS.members
 
   function handleRemove(memberId: string) {
     setRemovingId(memberId)
@@ -77,8 +77,8 @@ export function MembersView({
             {members.length} membro{members.length !== 1 ? 's' : ''}
             {plan === 'free' && (
               <span className="ml-1 text-muted-foreground/70">
-                · {FREE_MEMBER_LIMIT - members.length > 0
-                  ? `${FREE_MEMBER_LIMIT - members.length} vaga${FREE_MEMBER_LIMIT - members.length !== 1 ? 's' : ''} restante${FREE_MEMBER_LIMIT - members.length !== 1 ? 's' : ''} no plano Free`
+                · {FREE_LIMITS.members - members.length > 0
+                  ? `${FREE_LIMITS.members - members.length} vaga${FREE_LIMITS.members - members.length !== 1 ? 's' : ''} restante${FREE_LIMITS.members - members.length !== 1 ? 's' : ''} no plano Free`
                   : 'limite do plano Free atingido'}
               </span>
             )}
@@ -109,7 +109,7 @@ export function MembersView({
         <div className="flex items-start gap-3 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800 dark:border-amber-800 dark:bg-amber-950/40 dark:text-amber-400">
           <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0" />
           <span>
-            O plano Free permite até {FREE_MEMBER_LIMIT} membros.{' '}
+            O plano Free permite até {FREE_LIMITS.members} membros.{' '}
             <a href="/settings/billing" className="font-medium underline underline-offset-2">
               Faça upgrade para Pro
             </a>{' '}
