@@ -57,8 +57,10 @@ export function DealForm({
   const [stageId, setStageId] = useState<StageId>(defaultStageId)
   const [deleteConfirm, setDeleteConfirm] = useState(false)
 
+  // Form reset when the modal opens — intentional setState in effect
   useEffect(() => {
     if (open) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setDeleteConfirm(false)
       if (deal) {
         setTitle(deal.title)

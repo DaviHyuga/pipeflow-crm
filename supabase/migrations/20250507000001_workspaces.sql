@@ -30,6 +30,7 @@ create table if not exists workspaces (
 
 create index if not exists workspaces_slug_idx on workspaces(slug);
 
+drop trigger if exists workspaces_updated_at on workspaces;
 create trigger workspaces_updated_at
   before update on workspaces
   for each row execute function set_updated_at();
@@ -107,18 +108,22 @@ $$;
 -- -----------------------------------------------------------------------------
 alter table workspaces enable row level security;
 
+drop policy if exists "workspace_select" on workspaces;
 create policy "workspace_select"
   on workspaces for select
   using (is_workspace_member(id));
 
+drop policy if exists "workspace_insert" on workspaces;
 create policy "workspace_insert"
   on workspaces for insert
   with check (auth.uid() is not null);
 
+drop policy if exists "workspace_update" on workspaces;
 create policy "workspace_update"
   on workspaces for update
   using (workspace_member_role(id) = 'admin');
 
+drop policy if exists "workspace_delete" on workspaces;
 create policy "workspace_delete"
   on workspaces for delete
   using (workspace_member_role(id) = 'admin');
@@ -128,10 +133,12 @@ create policy "workspace_delete"
 -- -----------------------------------------------------------------------------
 alter table workspace_members enable row level security;
 
+drop policy if exists "workspace_members_select" on workspace_members;
 create policy "workspace_members_select"
   on workspace_members for select
   using (is_workspace_member(workspace_id));
 
+drop policy if exists "workspace_members_insert" on workspace_members;
 create policy "workspace_members_insert"
   on workspace_members for insert
   with check (
@@ -147,10 +154,12 @@ create policy "workspace_members_insert"
     )
   );
 
+drop policy if exists "workspace_members_update" on workspace_members;
 create policy "workspace_members_update"
   on workspace_members for update
   using (workspace_member_role(workspace_id) = 'admin');
 
+drop policy if exists "workspace_members_delete" on workspace_members;
 create policy "workspace_members_delete"
   on workspace_members for delete
   using (
@@ -163,14 +172,17 @@ create policy "workspace_members_delete"
 -- -----------------------------------------------------------------------------
 alter table workspace_invites enable row level security;
 
+drop policy if exists "workspace_invites_select" on workspace_invites;
 create policy "workspace_invites_select"
   on workspace_invites for select
   using (is_workspace_member(workspace_id));
 
+drop policy if exists "workspace_invites_insert" on workspace_invites;
 create policy "workspace_invites_insert"
   on workspace_invites for insert
   with check (workspace_member_role(workspace_id) = 'admin');
 
+drop policy if exists "workspace_invites_delete" on workspace_invites;
 create policy "workspace_invites_delete"
   on workspace_invites for delete
   using (workspace_member_role(workspace_id) = 'admin');

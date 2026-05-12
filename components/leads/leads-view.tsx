@@ -74,7 +74,9 @@ export function LeadsView({ leads, currentSearch, currentStatus, ownerDisplay, p
   const [isPending, setIsPending] = useState(false)
   const [actionError, setActionError] = useState('')
   const statusFilterRef = useRef(statusFilter)
-  statusFilterRef.current = statusFilter
+  useEffect(() => {
+    statusFilterRef.current = statusFilter
+  })
 
   // Debounced search → URL update
   useEffect(() => {

@@ -35,6 +35,7 @@ create index if not exists subscriptions_workspace_idx         on subscriptions(
 create index if not exists subscriptions_stripe_sub_idx        on subscriptions(stripe_subscription_id);
 create index if not exists subscriptions_stripe_customer_idx   on subscriptions(stripe_customer_id);
 
+drop trigger if exists subscriptions_updated_at on subscriptions;
 create trigger subscriptions_updated_at
   before update on subscriptions
   for each row execute function set_updated_at();
@@ -42,6 +43,7 @@ create trigger subscriptions_updated_at
 -- RLS: membros do workspace podem ler; escrita apenas via service_role (webhook)
 alter table subscriptions enable row level security;
 
+drop policy if exists "subscriptions_select" on subscriptions;
 create policy "subscriptions_select"
   on subscriptions for select
   using (is_workspace_member(workspace_id));

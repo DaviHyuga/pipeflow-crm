@@ -71,9 +71,11 @@ export function LeadForm({ open, onOpenChange, lead, ownerDisplay, onSave }: Lea
     estimatedValueRaw: "",
   })
 
+  // Form reset when the modal opens — intentional setState in effect
   useEffect(() => {
     if (!open) return
     if (lead) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setForm({
         name: lead.name,
         email: lead.email,

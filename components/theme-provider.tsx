@@ -15,19 +15,18 @@ const ThemeContext = createContext<ThemeContextValue>({
 })
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [theme, setTheme] = useState<Theme>("dark")
+  const [theme, setTheme] = useState<Theme>(() => {
+    if (typeof window === "undefined") return "dark"
+    return (localStorage.getItem("pipeflow-theme") as Theme) ?? "dark"
+  })
 
   useEffect(() => {
-    const stored = localStorage.getItem("pipeflow-theme") as Theme | null
-    const resolved: Theme = stored ?? "dark"
-    setTheme(resolved)
-    document.documentElement.classList.toggle("dark", resolved === "dark")
-  }, [])
+    document.documentElement.classList.toggle("dark", theme === "dark")
+  }, [theme])
 
   function toggle() {
     const next: Theme = theme === "dark" ? "light" : "dark"
     setTheme(next)
-    document.documentElement.classList.toggle("dark", next === "dark")
     localStorage.setItem("pipeflow-theme", next)
   }
 

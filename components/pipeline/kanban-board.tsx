@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useRef } from "react"
+import { useState, useRef, useEffect } from "react"
 import {
   DndContext,
   DragEndEvent,
@@ -67,7 +67,9 @@ export function KanbanBoard({ initialDeals, workspaceLeads }: KanbanBoardProps) 
 
   // Always-current ref to avoid stale closures in drag handlers
   const latestBoards = useRef(boards)
-  latestBoards.current = boards
+  useEffect(() => {
+    latestBoards.current = boards
+  })
 
   const sensors = useSensors(
     useSensor(PointerSensor, { activationConstraint: { distance: 8 } }),
