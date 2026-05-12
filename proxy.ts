@@ -47,10 +47,17 @@ export async function proxy(request: NextRequest) {
   }
 
   if (user && isAuthRoute) {
-    // Respeita ?next= para redirecionar após login (ex.: aceitar convite)
+    // Respeita ?next= para redirecionar após login (ex.: aceitar convite).
+    // Only allow relative paths that start with '/' and do not contain '//'
+    // (which could be used as a protocol-relative URL to redirect off-domain).
     const next = request.nextUrl.searchParams.get('next')
+    const isSafeNext =
+      next &&
+      next.startsWith('/') &&
+      !next.startsWith('//') &&
+      !next.includes('\\')
     const url = request.nextUrl.clone()
-    url.pathname = next && next.startsWith('/') ? next : '/dashboard'
+    url.pathname = isSafeNext ? next! : '/dashboard'
     url.search = ''
     return NextResponse.redirect(url)
   }

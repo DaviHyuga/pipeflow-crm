@@ -59,7 +59,26 @@ export async function createWorkspace(
 }
 
 /** Troca o workspace ativo via cookie. */
-export async function switchWorkspace(workspaceId: string): Promise<void> {
+export async function switchWorkspace(workspaceId: string): Promise<{ error?: string } | void> {
+  // Verify the caller is actually a member of the target workspace
+  const authClient = await createClient()
+  const {
+    data: { user },
+  } = await authClient.auth.getUser()
+  if (!user) redirect('/login')
+
+  const supabase = await createServiceClient()
+  const { data: membership } = await supabase
+    .from('workspace_members')
+    .select('id')
+    .eq('workspace_id', workspaceId)
+    .eq('user_id', user.id)
+    .maybeSingle()
+
+  if (!membership) {
+    return { error: 'Você não é membro deste workspace' }
+  }
+
   const cookieStore = await cookies()
   cookieStore.set(WORKSPACE_COOKIE, workspaceId, {
     path: '/',
@@ -84,6 +103,19 @@ export async function updateWorkspaceAction(
   if (!workspaceId) return { error: 'Workspace não encontrado' }
 
   const supabase = await createServiceClient()
+
+  // Enforce admin-only access at the application layer
+  const { data: membership } = await supabase
+    .from('workspace_members')
+    .select('role')
+    .eq('workspace_id', workspaceId)
+    .eq('user_id', user.id)
+    .single()
+
+  if (!membership || membership.role !== 'admin') {
+    return { error: 'Apenas admins podem alterar o workspace' }
+  }
+
   const { error } = await supabase
     .from('workspaces')
     .update({ name: name.trim() })
@@ -109,6 +141,18 @@ export async function inviteMemberAction(
   if (!workspaceId) return { error: 'Workspace não encontrado' }
 
   const supabase = await createServiceClient()
+
+  // Enforce admin-only access at the application layer
+  const { data: callerMembership } = await supabase
+    .from('workspace_members')
+    .select('role')
+    .eq('workspace_id', workspaceId)
+    .eq('user_id', user.id)
+    .single()
+
+  if (!callerMembership || callerMembership.role !== 'admin') {
+    return { error: 'Apenas admins podem convidar membros' }
+  }
 
   // Verificar se o e-mail já é membro
   const [members, limitResult] = await Promise.all([
@@ -167,15 +211,20 @@ export async function removeMemberAction(
 
   const supabase = await createServiceClient()
 
-  // Impedir remoção do próprio admin
-  const { data: self } = await supabase
+  // Verify the caller is an admin of this workspace before any removal
+  const { data: callerRow } = await supabase
     .from('workspace_members')
-    .select('id')
+    .select('id, role')
     .eq('workspace_id', workspaceId)
     .eq('user_id', user.id)
     .single()
 
-  if (self?.id === memberId) return { error: 'Você não pode remover a si mesmo' }
+  if (!callerRow || callerRow.role !== 'admin') {
+    return { error: 'Apenas admins podem remover membros' }
+  }
+
+  // Impedir remoção do próprio admin
+  if (callerRow.id === memberId) return { error: 'Você não pode remover a si mesmo' }
 
   const { error } = await supabase
     .from('workspace_members')
@@ -191,9 +240,29 @@ export async function removeMemberAction(
 export async function cancelInviteAction(
   inviteId: string,
 ): Promise<{ error?: string } | void> {
+  // Require authenticated user before acting
+  const authClient = await createClient()
+  const {
+    data: { user },
+  } = await authClient.auth.getUser()
+  if (!user) redirect('/login')
+
   const cookieStore = await cookies()
   const workspaceId = cookieStore.get(WORKSPACE_COOKIE)?.value
   if (!workspaceId) return { error: 'Workspace não encontrado' }
+
+  // Verify the caller is an admin of this workspace
+  const supabase = await createServiceClient()
+  const { data: membership } = await supabase
+    .from('workspace_members')
+    .select('role')
+    .eq('workspace_id', workspaceId)
+    .eq('user_id', user.id)
+    .single()
+
+  if (!membership || membership.role !== 'admin') {
+    return { error: 'Apenas admins podem cancelar convites' }
+  }
 
   const { error } = await deleteInvite(inviteId, workspaceId)
   if (error) return { error }

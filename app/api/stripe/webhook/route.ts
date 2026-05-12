@@ -21,6 +21,23 @@ export async function POST(request: NextRequest) {
 
   const supabase = await createServiceClient()
 
+  // Idempotency guard: skip events already processed (Stripe can retry)
+  const { data: processed } = await supabase
+    .from('stripe_processed_events')
+    .select('id')
+    .eq('event_id', event.id)
+    .maybeSingle()
+
+  if (processed) {
+    return NextResponse.json({ received: true, duplicate: true })
+  }
+
+  // Record the event id before processing to handle concurrent retries
+  await supabase
+    .from('stripe_processed_events')
+    .insert({ event_id: event.id, event_type: event.type })
+    .throwOnError()
+
   switch (event.type) {
     case 'checkout.session.completed': {
       const session = event.data.object as Stripe.Checkout.Session

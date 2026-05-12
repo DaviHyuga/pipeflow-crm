@@ -59,7 +59,8 @@ export async function getLeads(
     query = query.eq('status', opts.status as LeadStatus)
   }
   if (opts?.q) {
-    const q = opts.q.trim()
+    // Sanitize: remove PostgREST filter-injection characters before interpolation
+    const q = opts.q.trim().replace(/[%_,.()*[\]]/g, '')
     if (q) query = query.or(`name.ilike.%${q}%,company.ilike.%${q}%` as string)
   }
 
