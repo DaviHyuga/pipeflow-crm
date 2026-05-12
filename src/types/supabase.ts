@@ -148,6 +148,20 @@ export type SubscriptionRow = {
   updated_at: string
 }
 
+export type StripeProcessedEventRow = {
+  id: string
+  event_id: string
+  event_type: string
+  processed_at: string
+}
+
+export type StripeProcessedEventInsert = {
+  id?: string
+  event_id: string
+  event_type: string
+  processed_at?: string
+}
+
 // ---------------------------------------------------------------------------
 // Insert types (campos com DEFAULT no banco são opcionais)
 // ---------------------------------------------------------------------------
@@ -259,6 +273,12 @@ export type Database = {
         Row: SubscriptionRow
         Insert: SubscriptionInsert
         Update: SubscriptionUpdate
+        Relationships: []
+      }
+      stripe_processed_events: {
+        Row: StripeProcessedEventRow
+        Insert: StripeProcessedEventInsert
+        Update: Partial<Omit<StripeProcessedEventRow, 'id'>>
         Relationships: []
       }
     }
